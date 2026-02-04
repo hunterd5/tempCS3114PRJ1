@@ -40,7 +40,7 @@ public class MemManagerTest {
     public void testSimpleInsert() {
         byte[] data = new byte[4];
         MemHandle h = mm.insert(data);
-        assertEquals(4, h.getSize());
+        assertEquals(4, h.getBlockSize());
         assertTrue(h.getStart() >= 0 && h.getStart() < mm.poolSize);
         // Check free lists updated (block of size 8 should be split)
         assertFalse(mm.freeLists[2].isEmpty()); // buddy of 4 bytes
@@ -67,7 +67,7 @@ public class MemManagerTest {
         byte[] data = new byte[20];
         MemHandle h = mm.insert(data);
         assertEquals(32, mm.poolSize); // pool doubled
-        assertEquals(32, h.getSize());
+        assertEquals(32, h.getBlockSize());
         assertTrue(h.getStart() < 32);
     }
     
@@ -159,7 +159,7 @@ public class MemManagerTest {
     @Test
     public void testAllocateAllAndFree() {
         MemHandle h = mm.insert(new byte[16]);
-        assertEquals(16, h.getSize());
+        assertEquals(16, h.getBlockSize());
         mm.release(h);
         assertFalse(mm.freeLists[4].isEmpty()); // back to single full block
     }

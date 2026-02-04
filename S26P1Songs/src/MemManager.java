@@ -124,7 +124,7 @@ public class MemManager {
                 poolSize *= 2;
                 maxK++;
                 
-                release(new MemHandle(newBlock.start, newBlock.size));
+                release(new MemHandle(newBlock.start, newBlock.size, info.length));
             }
         }
         
@@ -161,14 +161,14 @@ public class MemManager {
         
         //Returning a new memory handle including the memory start and size to 
         //  re-access when called
-        return new MemHandle(block.start, block.size);
+        return new MemHandle(block.start, block.size, info.length);
     }
     
     
     
     public void release(MemHandle h) {
         // Step 1: recreate the block from the handle
-        FreeBlock block = new FreeBlock(h.getStart(), h.getSize());
+        FreeBlock block = new FreeBlock(h.getStart(), h.getBlockSize());
         int k = log2(block.size);
 
         // Step 2: try to find the buddy in the same free list
@@ -190,14 +190,14 @@ public class MemManager {
             FreeBlock merged = new FreeBlock(mergedStart, block.size * 2);
 
             // Step 3: recursively release the merged block
-            release(new MemHandle(merged.start, merged.size));
+            release(new MemHandle(merged.start, merged.size, h.getRecordSize()));
         }
     }
     
     public byte[] getRecord(MemHandle h) {
-        byte[] data = new byte[h.getSize()];
+        byte[] data = new byte[h.getRecordSize()];
         int memStart = h.getStart();
-        int memSize = h.getSize();
+        int memSize = h.getRecordSize();
         
         for (int i = 0; i < memSize; i++)
         {

@@ -47,7 +47,7 @@ public class Hash {
 	public String get(MemHandle handle, int m) {
 		// Transfer handle to initial index
 		byte[] byteArray = mm.getRecord(handle);
-		String stringData = new String(byteArray, 0 , handle.getSize(), StandardCharsets.ISO_8859_1);
+		String stringData = new String(byteArray, 0, handle.getRecordSize(), StandardCharsets.ISO_8859_1);
 		int initialIndex = h(stringData, m);
 		int i = initialIndex;
 
