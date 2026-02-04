@@ -69,9 +69,9 @@ public class MemManager {
     
     
   
-    public MemHandle insert(byte[]initInfo) {
+    public MemHandle insert(byte[] info) {
         //Finds the minimum block size required to hold this data
-        int sizeRequired = nextPowerOfTwo(initInfo.length);
+        int sizeRequired = nextPowerOfTwo(info.length);
         //Finding the index of the freeList field to look for a FreeBlock object
         int k = log2(sizeRequired);
         //The status of the allocation starts as false
@@ -79,13 +79,6 @@ public class MemManager {
         //The current FreeBlockList to look at
         int i = k;
         
-        
-        //Updated info of size of next power of 2;
-        byte[] info = new byte[sizeRequired];
-        for (int p = 0; p < initInfo.length; p++)
-        {
-            info[p] = initInfo[p];
-        }
         
         //Runs until the block has been allocated, searching for free blocks, 
         //  then doubling the list if no space is found
@@ -161,7 +154,7 @@ public class MemManager {
         }
         
         //Copying memory to new block portion
-        for (int n = 0; n < block.size; n++)
+        for (int n = 0; n < info.length; n++)
         {
             memoryPool[block.start + n] = info[n];
         }
@@ -185,10 +178,6 @@ public class MemManager {
 
         if (buddy == null) {
             // No buddy found, just add to the free list
-            for (int n = 0; n < info.length(); n++)
-            {
-                memoryPool[block.start + n] = 0;
-            }
             freeLists[k].add(block);
         } 
         else 
@@ -226,7 +215,7 @@ public class MemManager {
      * @param x
      * @return True if power of 2, false if not
      */
-    private boolean isPowerOfTwo(int x)
+    public boolean isPowerOfTwo(int x)
     {
         return (x & (x - 1)) == 0;
     }
@@ -240,7 +229,7 @@ public class MemManager {
      * @param x 
      * @return The next highest power of 2
      */
-    private int nextPowerOfTwo(int x) 
+    public int nextPowerOfTwo(int x) 
     {
         int p = 1;
         while (p < x)
@@ -259,7 +248,7 @@ public class MemManager {
      * @param x 
      * @return log2(x)
      */
-    private int log2(int x)
+    public int log2(int x)
     {
         int r = 0;
         while (x > 1)
