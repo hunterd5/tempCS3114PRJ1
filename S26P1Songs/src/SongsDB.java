@@ -129,7 +129,7 @@ public class SongsDB implements Songs
         StringBuilder ans = new StringBuilder();
         
         //artist
-        int old = mm.getPoolSize();
+        int old = mm.poolSize();
         
         return "";
         
