@@ -18,11 +18,6 @@ public class SongsDB implements Songs
     private int initSizeM;
     private int initSizeH;
     
-    private boolean powCheck(int x)
-    {
-        return (x > 0) && (x & (x - 1)) == 0;
-    }
-    
     
     // ----------------------------------------------------------
     /**
@@ -59,7 +54,7 @@ public class SongsDB implements Songs
             return "Initial memory manager size must be positive";
         }
         
-        if (!powCheck(inMemMan))
+        if (!isPowerOfTwo(inMemMan))
         {
             init = false;
             return "Initial memory manager size must be a power of 2";
