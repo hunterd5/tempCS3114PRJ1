@@ -4,12 +4,26 @@ import java.io.IOException;
  * The database implementation for this project.
  * We have two hash tables and a memory manager.
  *
- * @author Hunter Dillon, Katelyn Cao
- * @version Milestone 1
+ * @author Katelyn Cao, Hunter Dillon
+ * @version feb 3, 2026
  */
 public class SongsDB implements Songs
 {
 
+    private MemManager mm;
+    private Hash artist;
+    private Hash song;
+    
+    private boolean init = false;
+    private int initSizeM;
+    private int initSizeH;
+    
+    private boolean powCheck(int x)
+    {
+        return (x > 0) && (x & (x - 1)) == 0;
+    }
+    
+    
     // ----------------------------------------------------------
     /**
      * Create a new SongsDB object.
@@ -17,7 +31,6 @@ public class SongsDB implements Songs
      */
     public SongsDB()
     {
-        
     }
 
 
@@ -32,6 +45,34 @@ public class SongsDB implements Songs
      */
     public String create(int inHash, int inMemMan)
     {
+        //test hash size input
+        if (inHash <= 0)
+        {
+            init = false;
+            return "Initial hash table size must be positive";
+        }
+        
+        // test memory manager input (size and power)
+        if (inMemMan <= 0)
+        {
+            init = false;
+            return "Initial memory manager size must be positive";
+        }
+        
+        if (!powCheck(inMemMan))
+        {
+            init = false;
+            return "Initial memory manager size must be a power of 2";
+        }
+        
+        //set fields
+        mm = new MemManager(inMemMan);
+        artist = new Hash(inHash, mm);
+        song = new Hash(inHash, mm);
+        init = true;
+        initSizeM = inMemMan;
+        initSizeH = inHash;
+        
         return "";
     }
 
@@ -41,6 +82,19 @@ public class SongsDB implements Songs
      * @return true on successful clear of database
      */
     public boolean clear() {
+        
+        //false if re-initialize failed
+        if (!init)
+        {
+            return false;
+        }
+        
+        //set to new mem manager and hashes
+        mm = new MemManager(initSizeM);
+        artist = new Hash(initSizeH, mm);
+        song = new Hash(initSizeH, mm);
+        
+        //return true if success
         return true;
     }
 
@@ -59,7 +113,27 @@ public class SongsDB implements Songs
     public String insert(String artistString, String songString)
         throws IOException
     {
+        // test initialized
+        if (!init)
+        {
+            return "Database not initialized";
+        }
+        
+        // test if empty
+        if (artistString == null || artistString.isEmpty() || songString == null
+            || songString.isEmpty())
+        {
+            return "Input strings cannot be null or empty";
+        }
+        
+        StringBuilder ans = new StringBuilder();
+        
+        //artist
+        int old = mm.getPoolSize();
+        
         return "";
+        
+        
     }
 
 
@@ -75,6 +149,38 @@ public class SongsDB implements Songs
      * @throws IOException
      */
     public String remove(String type, String nameString) throws IOException {
+        
+        //test initialized
+        if (!init)
+        {
+            return "Database not initialized";
+        }
+        
+        //test empty/null
+        if (type == null || type.isEmpty() || nameString == null || 
+            nameString.isEmpty())
+        {
+            return "Input strings cannot be null or empty";
+        }
+        
+        //test type
+        if (!type.equals("artist") && !type.equals("song"))
+        {
+            return "Bad type value |" + type + "| on remove";
+        }
+        
+        //find table to remove from
+        Hash table;
+        if (type.equals("artist"))
+        {
+            table = artist;
+        }
+        else {
+            table = song;
+        }
+        
+        //remove from table
+        
         return "";
     }
 
