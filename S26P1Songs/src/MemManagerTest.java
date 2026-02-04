@@ -25,8 +25,8 @@ public class MemManagerTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testConstructorInvalidZero() {
-        new MemManager(0);
-    }
+    new MemManager(0);
+}
 
     @Test(expected = IllegalArgumentException.class)
     public void testConstructorInvalidNonPowerOfTwo() {
