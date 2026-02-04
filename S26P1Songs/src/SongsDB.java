@@ -175,8 +175,29 @@ public class SongsDB implements Songs
         }
         
         //remove from table
+        MemHandle rm = table.remove(nameString);
         
-        return "";
+        if (rm == null)
+        {
+            if (type.equals("artist"))
+            {
+                return "|" + nameString + "| does not exist in the Artist database";
+            }
+            else {
+                return "|" + nameString + "| does not exist in the Song database";
+            }
+        }
+        
+        mm.release(rm);
+        
+        if (type.equals("artist"))
+        {
+            return "|" + nameString + "| is removed from the Artist database");
+        }
+        else {
+            return "|" + nameString + "| is removed from the Song database");
+        }
+        
     }
 
 
@@ -191,6 +212,38 @@ public class SongsDB implements Songs
      */
     public String print(String type)
         throws IOException {
-        return "";
+        
+        //test if initialized
+        if (!init)
+        {
+            return "Database not initialized";
+        }
+        
+        //test if empty or null
+        if (type == null || type.isEmpty())
+        {
+            return "Input strings cannot be null or empty";
+        }
+        
+        
+        //prints according to type
+        if (type.equals("artist"))
+        {
+            return artist.printTable("artist");
+        }
+        else if (type.equals("song"))
+        {
+            return song.printTable("song");
+        }
+        else if (type.equals("blocks"))
+        {
+            return mm.printBlocks();
+        }
+        else
+        {
+            return "Bad print parameter";
+        }
+        
+        
     }
 }
