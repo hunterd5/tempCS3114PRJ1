@@ -192,10 +192,10 @@ public class SongsDB implements Songs
         
         if (type.equals("artist"))
         {
-            return "|" + nameString + "| is removed from the Artist database");
+            return "|" + nameString + "| is removed from the Artist database";
         }
         else {
-            return "|" + nameString + "| is removed from the Song database");
+            return "|" + nameString + "| is removed from the Song database";
         }
         
     }
@@ -245,5 +245,16 @@ public class SongsDB implements Songs
         }
         
         
+    }
+    
+    /**Checks if value is a power of two by subtracting 1 to flip 
+    * the bit and all bits below it, then AND'ing them, which 
+    * would result in a 0 if value is a power of 2
+    * @param x
+    * @return True if power of 2, false if not
+    */
+    private boolean isPowerOfTwo(int x)
+    {
+        return (x & (x - 1)) == 0;
     }
 }

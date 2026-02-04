@@ -194,4 +194,14 @@ public class Hash {
 			}
 		}
 	}
+	
+	public MemHandle remove(String data) {
+	    // TODO real implementation later
+	    return null;
+	}
+	
+	public String printTable(String kind) {
+	    // TODO real implementation later
+	    return "";
+	}
 }

@@ -215,7 +215,7 @@ public class MemManager {
      * @param x
      * @return True if power of 2, false if not
      */
-    public boolean isPowerOfTwo(int x)
+    private boolean isPowerOfTwo(int x)
     {
         return (x & (x - 1)) == 0;
     }
@@ -229,7 +229,7 @@ public class MemManager {
      * @param x 
      * @return The next highest power of 2
      */
-    public int nextPowerOfTwo(int x) 
+    private int nextPowerOfTwo(int x) 
     {
         int p = 1;
         while (p < x)
@@ -248,7 +248,7 @@ public class MemManager {
      * @param x 
      * @return log2(x)
      */
-    public int log2(int x)
+    private int log2(int x)
     {
         int r = 0;
         while (x > 1)
@@ -257,5 +257,10 @@ public class MemManager {
             r++;
         }
         return r;
+    }
+    
+    public String printBlocks() {
+        // TODO real implementation later
+        return "No free blocks are available.";
     }
 }
