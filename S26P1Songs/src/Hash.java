@@ -381,3 +381,51 @@ public class Hash {
     }
     
 }
+	
+	private int colResStep(int homeSlot, int j) {
+	    return homeSlot + j * j;
+	}
+	
+	public void doubleHashSize()
+	{
+		m = this.hashTable.length * 2;
+		MemHandle[] newHashTable = new MemHandle[m];
+		
+		System.arraycopy(hashTable, 0, newHashTable, 0, hashTable.length);
+		hashTable = newHashTable;
+	}
+	
+	public void rehash()
+	{
+		//Creating a new table to be populated
+		MemHandle[] currHashTableCopy = hashTable;
+		hashTable = new MemHandle[currHashTableCopy.length];
+		tablePop = 0;
+		
+		//Going through all the items in the old hash table
+		for (int i = 0; i < this.hashTable.length; i++)
+		{
+			if (currHashTableCopy[i] != null)
+			{
+				MemHandle handle = currHashTableCopy[i];
+				byte[] byteArray =  mm.getRecord(handle);
+				String value = new String(byteArray, 0, handle.getRecordSize(), StandardCharsets.ISO_8859_1);
+
+				this.insert(value, m);
+			}
+		}
+	}
+	
+	public MemHandle remove(String data) {
+	    // TODO real implementation later
+	    return null;
+	}
+	
+	public String printTable() {
+	    if (this.tablePop == 0)
+	    {
+	    	return "0";
+	    }
+	    return "" + tablePop;
+	}
+}

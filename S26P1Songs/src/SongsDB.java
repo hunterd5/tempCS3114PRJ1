@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 /**
  * The database implementation for this project.
@@ -121,8 +122,9 @@ public class SongsDB implements Songs
             return "Input strings cannot be null or empty";
         }
         
-        StringBuilder ans = new StringBuilder();
         
+        StringBuilder ans = new StringBuilder();
+
         //artist
         int oldPool = mm.poolSize();
         int oldArt = artist.hashTable.length;
@@ -190,6 +192,50 @@ public class SongsDB implements Songs
             ans.append("|").append(songString).append("| is added to the Song database");
         }
         
+        
+        //Remembering the old memory pool and hash table size to compare after insert
+        int oldPoolSize = mm.poolSize;
+        int oldHashSize = artist.hashTable.length;
+        
+        //Inserting the artist
+        artist.insert(artistString, initSizeH);
+        
+        //Checking if memory pool doubled
+        if (mm.poolSize > oldPoolSize)
+        {
+            ans.append("Memory pool expanded to be " + mm.poolSize + " bytes\r\n");
+        }
+        //Checking if artist hash table doubled
+        if (artist.hashTable.length > oldHashSize)
+        {
+            ans.append("Artist hash table size doubled\r\n");
+        }
+        
+        //Stating that the specific song was added to database
+        ans.append("|" + artistString + "| is added to the Artist database\r\n");
+
+        
+        //Remembering the old memory pool and hash table size to compare after insert
+        oldPoolSize = mm.poolSize;
+        oldHashSize = song.hashTable.length;
+        
+        //Inserting the song
+        song.insert(songString, initSizeH);
+        
+        //Checking if memory pool doubled
+        if (mm.poolSize > oldPoolSize)
+        {
+            ans.append("Memory pool expanded to be " + mm.poolSize + " bytes\r\n");
+        }
+        //Checking if song hash table doubled
+        if (song.hashTable.length > oldHashSize)
+        {
+            ans.append("Song hash table size doubled\r\n");
+        }
+        
+        //Stating that the specific artist was added to database
+        ans.append("|" + songString + "| is added to the Song database\r\n");
+
         return ans.toString();
         
         
@@ -289,20 +335,43 @@ public class SongsDB implements Songs
             return "Input strings cannot be null or empty";
         }
         
-        
+        String ans = "";
         //prints according to type
         if (type.equals("artist"))
         {
-            return artist.printTable("artist");
+        	
+        	for (int i = 0; i < this.artist.hashTable.length; i++)
+        	{
+        		if (this.artist.hashTable[i] != null)
+        		{
+        			MemHandle currHandle = this.artist.hashTable[i];
+        			String currArtistName = new String(mm.getRecord(currHandle), 0, currHandle.getRecordSize(), StandardCharsets.ISO_8859_1);
+        			ans += i + ": |" + currArtistName + "|\r\n";
+        		}
+        		
+        	}
+            return ans + "total artists: " + artist.printTable();
         }
+        
         else if (type.equals("song"))
         {
-            return song.printTable("song");
+        	for (int i = 0; i < this.song.hashTable.length; i++)
+        	{
+        		if (this.song.hashTable[i] != null)
+        		{
+        			MemHandle currHandle = this.song.hashTable[i];
+        			String currSongName = new String(mm.getRecord(currHandle), 0, currHandle.getRecordSize(), StandardCharsets.ISO_8859_1);
+        			ans += i + ": |" + currSongName + "|\r\n";
+        		}
+        	}
+            return ans + "total songs: " + song.printTable();
         }
+        
         else if (type.equals("blocks"))
         {
             return mm.printBlocks();
-        }
+        }f
+        
         else
         {
             return "Bad print parameter";
