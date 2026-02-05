@@ -28,6 +28,18 @@ public class FreeBlockList {
         head = null;
     }
     
+    public String getStarts()
+    {
+    	StringBuilder ans = new StringBuilder();
+    	Node curr = head;
+    	while (curr != null)
+    	{
+    		ans.append(curr.block.start).append(" ");
+    		curr = curr.next;
+    	}
+    	return ans.toString();
+    }
+    
     //Linked list operations
     //Adding a block to the list
     public void add(FreeBlock block)

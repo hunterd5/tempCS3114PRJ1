@@ -260,7 +260,24 @@ public class MemManager {
     }
     
     public String printBlocks() {
-        // TODO real implementation later
-        return "No free blocks are available.";
+        StringBuilder ans = new StringBuilder();
+        boolean hasBlocks = false;
+
+        for (int i = 0; i < freeLists.length; i++) {
+            if (!freeLists[i].isEmpty()) {
+            	hasBlocks = true;
+            	ans.append(freeLists[i].getFirst().size).append(": ");
+            	ans.append(freeLists[i].getStarts());
+
+                // End line
+                ans.append("\n");
+            }
+        }
+
+        if (!hasBlocks) {
+            return "No free blocks are available.";
+        }
+
+        return ans.toString();
     }
 }

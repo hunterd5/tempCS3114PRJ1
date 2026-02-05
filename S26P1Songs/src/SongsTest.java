@@ -1,3 +1,5 @@
+import java.io.IOException;
+
 import student.TestCase;
 
 /**
@@ -237,3 +239,4 @@ public class SongsTest extends TestCase {
             it.print("blocks"));
     }
 }
+
