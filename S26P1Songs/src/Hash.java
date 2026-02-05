@@ -200,8 +200,11 @@ public class Hash {
 	    return null;
 	}
 	
-	public String printTable(String kind) {
-	    // TODO real implementation later
-	    return "";
+	public String printTable() {
+	    if (this.tablePop == 0)
+	    {
+	    	return "0";
+	    }
+	    return "" + tablePop;
 	}
 }
