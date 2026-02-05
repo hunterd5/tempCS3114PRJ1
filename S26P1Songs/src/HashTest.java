@@ -88,6 +88,7 @@ public class HashTest {
 		MemHandle testHandle4 = hashTest.insert("Katlyn", m);
 		MemHandle testHandle5 = hashTest.insert("Jaclyn", m);
 		assertEquals(16, hashTest.hashTable.length);
+
 	}
 	
 	@Test

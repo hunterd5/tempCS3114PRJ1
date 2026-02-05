@@ -123,14 +123,26 @@ public class SongsDB implements Songs
         }
         
         
+        
+        
+        boolean artistDuplicate = artist.contains(artistString);
+        boolean songDuplicate = song.contains(artistString);
+
         StringBuilder ans = new StringBuilder();
+        
+        
         
         //Remembering the old memory pool and hash table size to compare after insert
         int oldPoolSize = mm.poolSize;
         int oldHashSize = artist.hashTable.length;
         
+
+        
         //Inserting the artist
-        artist.insert(artistString, initSizeH);
+        if (!artistDuplicate)
+        {
+            artist.insert(artistString, initSizeH);
+        }
         
         //Checking if memory pool doubled
         if (mm.poolSize > oldPoolSize)
@@ -143,16 +155,25 @@ public class SongsDB implements Songs
             ans.append("Artist hash table size doubled\r\n");
         }
         
-        //Stating that the specific song was added to database
-        ans.append("|" + artistString + "| is added to the Artist database\r\n");
+        if (artistDuplicate) {
+            ans.append("|" + artistString + "| duplicates a record already in the Artist database\r\n");
+        }
+        else
+        {
+            ans.append("|" + artistString + "| is added to the Artist database\r\n");
+        }
 
         
         //Remembering the old memory pool and hash table size to compare after insert
         oldPoolSize = mm.poolSize;
         oldHashSize = song.hashTable.length;
         
+ 
         //Inserting the song
-        song.insert(songString, initSizeH);
+        if (!songDuplicate)
+        {
+            song.insert(songString, initSizeH);
+        }
         
         //Checking if memory pool doubled
         if (mm.poolSize > oldPoolSize)
@@ -165,8 +186,13 @@ public class SongsDB implements Songs
             ans.append("Song hash table size doubled\r\n");
         }
         
-        //Stating that the specific artist was added to database
-        ans.append("|" + songString + "| is added to the Song database\r\n");
+        if (songDuplicate) {
+            ans.append("|" + songString + "| duplicates a record already in the Song database\r\n");
+        }
+        else
+        {
+            ans.append("|" + songString + "| is added to the Song database\r\n");
+        }
 
         return ans.toString();
         
@@ -277,10 +303,16 @@ public class SongsDB implements Songs
         		if (this.artist.hashTable[i] != null)
         		{
         			MemHandle currHandle = this.artist.hashTable[i];
-        			String currArtistName = new String(mm.getRecord(currHandle), 0, currHandle.getRecordSize(), StandardCharsets.ISO_8859_1);
-        			ans += i + ": |" + currArtistName + "|\r\n";
+        			if (currHandle.getStart() != -1)
+        			{
+        				String currArtistName = new String(mm.getRecord(currHandle), 0, currHandle.getRecordSize(), StandardCharsets.ISO_8859_1);
+            			ans += i + ": |" + currArtistName + "|\r\n";
+        			}
+        			else
+        			{
+        				ans += i + ": |TOMBSTONE|\r\n";
+        			}
         		}
-        		
         	}
             return ans + "total artists: " + artist.printTable();
         }
@@ -292,8 +324,16 @@ public class SongsDB implements Songs
         		if (this.song.hashTable[i] != null)
         		{
         			MemHandle currHandle = this.song.hashTable[i];
-        			String currSongName = new String(mm.getRecord(currHandle), 0, currHandle.getRecordSize(), StandardCharsets.ISO_8859_1);
-        			ans += i + ": |" + currSongName + "|\r\n";
+        			if (currHandle.getStart() != -1)
+        			{
+        				String currSongName = new String(mm.getRecord(currHandle), 0, currHandle.getRecordSize(), StandardCharsets.ISO_8859_1);
+        				ans += i + ": |" + currSongName + "|\r\n";
+        			}
+        			else
+        			{
+        				ans += i + ": |TOMBSTONE|\r\n";
+        			}
+        			
         		}
         	}
             return ans + "total songs: " + song.printTable();
@@ -310,16 +350,18 @@ public class SongsDB implements Songs
         }
         
         
-    }
+    	}
     
-    /**Checks if value is a power of two by subtracting 1 to flip 
-    * the bit and all bits below it, then AND'ing them, which 
-    * would result in a 0 if value is a power of 2
-    * @param x
-    * @return True if power of 2, false if not
-    */
-    private boolean isPowerOfTwo(int x)
-    {
-        return (x & (x - 1)) == 0;
-    }
-}
+    
+    
+    	/**Checks if value is a power of two by subtracting 1 to flip 
+     * the bit and all bits below it, then AND'ing them, which 
+    	* would result in a 0 if value is a power of 2
+    	* @param x
+    	* @return True if power of 2, false if not
+    	*/
+    	private boolean isPowerOfTwo(int x)
+    	{
+        	return (x & (x - 1)) == 0;
+    	}
+	}

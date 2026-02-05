@@ -4,7 +4,7 @@ public class Hash {
 
 	/** Tombstone stand-in */
 	private static final MemHandle TOMBSTONE = new MemHandle(-1, -1, -1);
-	
+
 	/** Hash Table */
 	MemHandle[] hashTable;
 	/** Memory Manager */
@@ -52,33 +52,32 @@ public class Hash {
 		int i = initialIndex;
 		int j = 0;
 
-		//steps through the quadratic probing, checking if null or the correct handle
-	    while (true) {
-	        i = colResStep(initialIndex, j);
+		// steps through the quadratic probing, checking if null or the correct handle
+		while (true) {
+			i = colResStep(initialIndex, j);
 
-	        if (hashTable[i] == null) {
-	            return "Data Not Found In Hash Table";
-	        }
+			if (hashTable[i] == null) {
+				return "Data Not Found In Hash Table";
+			}
 
-	        if (hashTable[i] == handle) {
-	            return stringData;
-	        }
+			if (hashTable[i] == handle) {
+				return stringData;
+			}
 
-	        j++;
-	    }
+			j++;
+		}
 	}
 
 	public MemHandle insert(String data, int m) {
 		// Calculating the hash function and creating a handle placeholder
 		int initialIndex = h(data, m);
 		MemHandle handle = null;
-		
-		if (tablePop + 1 > hashTable.length / 2)
-		{
+
+		if (tablePop + 1 > hashTable.length / 2) {
 			this.doubleHashSize();
 			this.rehash();
 		}
-		
+
 		boolean allocated = false;
 		while (!allocated) {
 			// Checking if the handle is in the first location in the table (need to account
@@ -108,93 +107,131 @@ public class Hash {
 		return handle;
 	}
 
-	
 	public boolean remove(MemHandle handle) {
-	    int j = 0;
-	    byte[] bytes = mm.getRecord(handle);
-	    String key = new String(bytes, 0, handle.getRecordSize(),
-	        StandardCharsets.ISO_8859_1);
+		int j = 0;
+		byte[] bytes = mm.getRecord(handle);
+		String key = new String(bytes, 0, handle.getRecordSize(), StandardCharsets.ISO_8859_1);
 
-	    int home = h(key, m);
+		int home = h(key, m);
 
-	    while (true) {
-	        int i = (home + j * j) % hashTable.length;
+		while (true) {
+			int i = (home + j * j) % hashTable.length;
 
-	        if (hashTable[i] == null) {
-	            return false; // not found
-	        }
+			if (hashTable[i] == null) {
+				return false; // not found
+			}
 
-	        if (hashTable[i] == handle) {
-	            hashTable[i] = TOMBSTONE;
-	            tablePop--;
-	            return true;
-	        }
-	        j++;
-	    }
+			if (hashTable[i] == handle) {
+				hashTable[i] = TOMBSTONE;
+				tablePop--;
+				return true;
+			}
+			j++;
+		}
 	}
-	
-	
-	
-	
+
+	public MemHandle remove(String data) {
+		int home = h(data, m);
+		int j = 0;
+
+		while (true) {
+			int i = (home + j * j) % hashTable.length;
+
+			if (hashTable[i] == null) {
+				return null; // not found
+			}
+
+			if (hashTable[i] != TOMBSTONE) {
+				MemHandle handle = hashTable[i];
+
+				byte[] bytes = mm.getRecord(handle);
+				String stored = new String(bytes, 0, handle.getRecordSize(), StandardCharsets.ISO_8859_1);
+
+				if (stored.equals(data)) {
+					hashTable[i] = TOMBSTONE;
+					tablePop--;
+					return handle;
+				}
+			}
+			j++;
+		}
+	}
+
 	private int colRes(int homeSlot) {
-	    int j = 0;
-	    int i;
-	    while (true) {
-	        i = colResStep(homeSlot, j);
+		int j = 0;
+		int i;
+		while (true) {
+			i = colResStep(homeSlot, j);
 
-	        //wrap around table
-	        i = i % hashTable.length;
+			// wrap around table
+			i = i % hashTable.length;
 
-	        if (hashTable[i] == null || hashTable[i] == TOMBSTONE) {
-	            return i;
-	        }
+			if (hashTable[i] == null || hashTable[i] == TOMBSTONE) {
+				return i;
+			}
 
-	        j++;
-	    }
+			j++;
+		}
 	}
-	
+
 	private int colResStep(int homeSlot, int j) {
-	    return homeSlot + j * j;
+		return homeSlot + j * j;
 	}
-	
-	public void doubleHashSize()
-	{
+
+	public void doubleHashSize() {
 		m = this.hashTable.length * 2;
 		MemHandle[] newHashTable = new MemHandle[m];
-		
+
 		System.arraycopy(hashTable, 0, newHashTable, 0, hashTable.length);
 		hashTable = newHashTable;
 	}
-	
-	public void rehash()
-	{
-		//Creating a new table to be populated
+
+	public void rehash() {
+		// Creating a new table to be populated
 		MemHandle[] currHashTableCopy = hashTable;
 		hashTable = new MemHandle[currHashTableCopy.length];
 		tablePop = 0;
-		
-		//Going through all the items in the old hash table
-		for (int i = 0; i < this.hashTable.length; i++)
-		{
-			if (currHashTableCopy[i] != null)
-			{
+
+		// Going through all the items in the old hash table
+		for (int i = 0; i < this.hashTable.length; i++) {
+			if (currHashTableCopy[i] != null) {
 				MemHandle handle = currHashTableCopy[i];
 				mm.release(handle);
-				byte[] byteArray =  mm.getRecord(handle);
+				byte[] byteArray = mm.getRecord(handle);
 				String value = new String(byteArray, 0, handle.getRecordSize(), StandardCharsets.ISO_8859_1);
 
 				this.insert(value, m);
 			}
 		}
 	}
-	
-	public MemHandle remove(String data) {
-	    // TODO real implementation later
-	    return null;
-	}
-	
+
 	public String printTable() {
 		String ans = "";
-	    return ans + tablePop;
+		return ans + tablePop;
 	}
+
+	public boolean contains(String data) {
+		int home = h(data, m);
+		int j = 0;
+
+		while (true) {
+			int i = (home + j * j) % hashTable.length;
+
+			if (hashTable[i] == null) {
+				return false;
+			}
+
+			if (hashTable[i] != TOMBSTONE) {
+				MemHandle handle = hashTable[i];
+				byte[] bytes = mm.getRecord(handle);
+				String stored = new String(bytes, 0, handle.getRecordSize(), StandardCharsets.ISO_8859_1);
+
+				if (stored.equals(data)) {
+					return true;
+				}
+			}
+			j++;
+		}
+	}
+
 }
