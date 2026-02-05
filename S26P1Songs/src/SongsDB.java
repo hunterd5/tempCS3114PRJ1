@@ -125,74 +125,6 @@ public class SongsDB implements Songs
         
         StringBuilder ans = new StringBuilder();
 
-        //artist
-        int oldPool = mm.poolSize();
-        int oldArt = artist.hashTable.length;
-        
-        MemHandle aExisting = artist.find(artistString);
-        if(aExisting != null)
-        {
-            ans.append("|").append(artistString).append("| duplicates a "
-                + "record already in the Artist database");
-        }
-        else {
-            artist.insert(artistString);
-            
-            //mem pool
-            if (mm.poolSize() != oldPool)
-            {
-                ans.append("Memory pool expanded to be ").append(mm.poolSize())
-                    .append(" bytes\r\n");
-                oldPool = mm.poolSize();
-            }
-            
-            //arist hash resize
-            if (artist.hashTable.length != oldArt)
-            {
-                ans.append("Artist hash table size doubled\r\n");
-            }
-            
-            ans.append("|").append(artstString).append("| is added ot the arist"
-                + "database");
-            
-            
-        }
-        
-        ans.append("\r\n")
-        
-        
-        //song
-        
-        int oldSongCap = song.hashTable.length;
-        
-        MemHandle sExisting = song.find(songString);
-        if (sExisting != null)
-        {
-            ans.append("|").append(songString).append("| duplicates a record"
-                + " already in the Song database");
-        }
-        
-        else {
-            song.insert(songString);
-            
-            //mem pool
-            if (mm.poolSize() != oldPool)
-            {
-                ans.append("Memory pool expanded to be ").append(
-                    mm.poolSize().append(" bytes\r\n");
-                oldPool = mm.poolSize()
-            }
-            
-            //song hash resize
-            if (song.hashTable.length != oldSongCap)
-            {
-                ans.append("Song hash table size doubled\r\n");
-            }
-            
-            ans.append("|").append(songString).append("| is added to the Song database");
-        }
-        
-        
         //Remembering the old memory pool and hash table size to compare after insert
         int oldPoolSize = mm.poolSize;
         int oldHashSize = artist.hashTable.length;
@@ -370,7 +302,7 @@ public class SongsDB implements Songs
         else if (type.equals("blocks"))
         {
             return mm.printBlocks();
-        }f
+        }
         
         else
         {
