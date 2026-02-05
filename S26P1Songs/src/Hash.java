@@ -408,6 +408,7 @@ public class Hash {
 			if (currHashTableCopy[i] != null)
 			{
 				MemHandle handle = currHashTableCopy[i];
+				mm.release(handle);
 				byte[] byteArray =  mm.getRecord(handle);
 				String value = new String(byteArray, 0, handle.getRecordSize(), StandardCharsets.ISO_8859_1);
 
