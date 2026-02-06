@@ -141,7 +141,7 @@ public class SongsDB implements Songs
         //Inserting the artist
         if (!artistDuplicate)
         {
-            artist.insert(artistString, initSizeH);
+            artist.insert(artistString);
         }
         
         //Checking if memory pool doubled
@@ -172,7 +172,7 @@ public class SongsDB implements Songs
         //Inserting the song
         if (!songDuplicate)
         {
-            song.insert(songString, initSizeH);
+            song.insert(songString);
         }
         
         //Checking if memory pool doubled

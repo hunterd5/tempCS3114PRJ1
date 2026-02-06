@@ -204,16 +204,16 @@ public class SongsTest extends TestCase {
             "|Little Eva| is added to the Artist database\r\n"
             + "|The Loco-Motion| is added to the Song database",
             it.insert("Little Eva", "The Loco-Motion"));
-//        assertFuzzyEquals(
-//            "0: |Blind Lemon Jefferson|\r\n"
-//            + "4: |Bukka White|\r\n"
-//            + "7: TOMBSTONE\r\n"
-//            + "10: |Sleepy John Estes|\r\n"
-//            + "12: |Guitar Slim|\r\n"
-//            + "14: |Charley Patton|\r\n"
-//            + "18: |Little Eva|\r\n"
-//            + "total artists: 6",
-//            it.print("artist"));
+        assertFuzzyEquals(
+            "0: |Blind Lemon Jefferson|\r\n"
+            + "4: |Bukka White|\r\n"
+            + "7: TOMBSTONE\r\n"
+            + "10: |Sleepy John Estes|\r\n"
+            + "12: |Guitar Slim|\r\n"
+            + "14: |Charley Patton|\r\n"
+            + "18: |Little Eva|\r\n"
+            + "total artists: 6",
+            it.print("artist"));
 //        assertFuzzyEquals(
 //            "1: |Fixin' To Die Blues|\r\n"
 //            + "2: TOMBSTONE\r\n"
