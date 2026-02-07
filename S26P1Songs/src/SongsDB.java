@@ -126,7 +126,7 @@ public class SongsDB implements Songs
         
         
         boolean artistDuplicate = artist.contains(artistString);
-        boolean songDuplicate = song.contains(artistString);
+        boolean songDuplicate = song.contains(songString);
 
         StringBuilder ans = new StringBuilder();
         

@@ -214,34 +214,57 @@ public class SongsTest extends TestCase {
             + "18: |Little Eva|\r\n"
             + "total artists: 6",
             it.print("artist"));
-//        assertFuzzyEquals(
-//            "1: |Fixin' To Die Blues|\r\n"
-//            + "2: TOMBSTONE\r\n"
-//            + "5: |Street Car Blues|\r\n"
-//            + "8: |Got The Blues|\r\n"
-//            + "15: |Long Lonesome Blues|\r\n"
-//            + "16: |Ma Rainey's Black Bottom|\r\n"
-//            + "17: |The Things That I Used To Do|\r\n"
-//            + "18: |The Loco-Motion|\r\n"
-//            + "total songs: 7",
-//            it.print("song"));
-//        assertFuzzyEquals(
-//            "|Jim Reeves| is added to the Artist database\r\n"
-//            + "|Jingle Bells| is added to the Song database",
-//            it.insert("Jim Reeves", "Jingle Bells"));
+        assertFuzzyEquals(
+            "1: |Fixin' To Die Blues|\r\n"
+            + "2: TOMBSTONE\r\n"
+            + "5: |Street Car Blues|\r\n"
+            + "8: |Got The Blues|\r\n"
+            + "15: |Long Lonesome Blues|\r\n"
+            + "16: |Ma Rainey's Black Bottom|\r\n"
+            + "17: |The Things That I Used To Do|\r\n"
+            + "18: |The Loco-Motion|\r\n"
+            + "total songs: 7",
+            it.print("song"));
+        assertFuzzyEquals(
+            "|Jim Reeves| is added to the Artist database\r\n"
+            + "|Jingle Bells| is added to the Song database",
+            it.insert("Jim Reeves", "Jingle Bells"));
         assertFuzzyEquals(
             "|Mongo Santamaria| is added to the Artist database\r\n"
             + "|Watermelon Man| is added to the Song database",
             it.insert("Mongo Santamaria", "Watermelon Man"));
-//        assertFuzzyEquals(
-//            "16: 368\r\n"
-//            + "128: 384",
-//            it.print("blocks"));
+        assertFuzzyEquals(
+            "16: 368\r\n"
+            + "128: 384",
+            it.print("blocks"));
     }
     
- // ----------------------------------------------------------
+    // ----------------------------------------------------------
     /**
-     * Test clear method
+     * Test that using create resets the songdb
+     *
+     * @throws Exception
+     */
+    public void testCreate() throws Exception {
+        
+        it = new SongsDB();
+        assertEquals("", it.create(10, 32));
+
+        it.insert("Tate McRae", "TIT FOR TAT");
+        assertEquals("", it.create(5, 64));
+
+        String[] artists = it.print("artist").split("\r\n");
+        assertEquals(1, artists.length);
+        assertEquals("total artists: 0", artists[0]);
+
+        String[] songs = it.print("song").split("\r\n");
+        assertEquals(1, songs.length);
+        assertEquals("total songs: 0", songs[0]);
+    }
+    
+    // ----------------------------------------------------------
+    /**
+     * Test that clear method fully resets db
      *
      * @throws Exception
      */
@@ -264,13 +287,13 @@ public class SongsTest extends TestCase {
         
     }
     
- // ----------------------------------------------------------
+    // ----------------------------------------------------------
     /**
-     * Test print method
+     * Test that print method clears memory manager to free block
      *
      * @throws Exception
      */
-    public void testPrintBlock() throws Exception 
+    public void testClearPrintBlock() throws Exception 
     {
         it = new SongsDB();
         it.create(10, 32);
@@ -279,10 +302,135 @@ public class SongsTest extends TestCase {
 
         assertTrue(it.clear());
 
-        String blocks = it.print("blocks");
+        String blocks = it.print("blocks").trim();
 
-        assertTrue(blocks.contains("32:"));
-        assertTrue(blocks.contains("0"));
+        assertEquals("32: 0", blocks);
+    }
+    
+    // ----------------------------------------------------------
+    /**
+    * Test that duplicating a song does not add to count in insert
+    *
+    * @throws Exception
+    */
+    public void testDuplicateCount() throws Exception {
+        it = new SongsDB();
+        it.create(11, 64);
+
+        it.insert("Rihanna", "Stay");
+        it.insert("Post Malone", "Stay");
+        
+        String[] lines = it.print("song").split("\r\n");
+        assertEquals("total songs: 1", lines[lines.length - 1]);
+    }
+    
+    // ----------------------------------------------------------
+    /**
+    * Test that duplicating a song prints output in insert
+    *
+    * @throws Exception
+    */   
+    public void testDuplicateSong() throws Exception {
+        it = new SongsDB();
+        it.create(11, 64);
+
+        it.insert("Rihanna", "Stay");
+
+        String out = it.insert("Post Malone", "Stay");
+        String[] lines = out.split("\r\n");
+
+        assertEquals(2, lines.length);
+        assertEquals("|Post Malone| is added to the Artist database", lines[0]);
+        assertEquals("|Stay| duplicates a record already in the Song database", lines[1]);
+    }
+    
+    // ----------------------------------------------------------
+    /**
+    * Tests printing artist and songs
+    *
+    * @throws Exception
+    */    
+    public void testPrint() throws Exception {
+        it = new SongsDB();
+        it.create(10, 32);
+
+        it.insert("Men I Trust", "Sugar");
+
+        String[] a = it.print("artist").split("\r\n");
+        assertEquals("total artists: 1", a[a.length - 1]);
+
+        String[] s = it.print("song").split("\r\n");
+        assertEquals("total songs: 1", s[s.length - 1]);
+    }
+    
+    // ----------------------------------------------------------
+    /**
+    * Test removing an artist
+    *
+    * @throws Exception
+    */
+    public void testRemove() throws Exception {
+        it = new SongsDB();
+        it.create(11, 64);
+
+        it.insert("Katelyn", "Happy Song");
+
+        assertEquals("|Katelyn| is removed from the Artist database",
+            it.remove("artist", "Katelyn"));
+
+        assertEquals("|Katelyn| does not exist in the Artist database",
+            it.remove("artist", "Katelyn"));
+    }
+    
+    
+    // ----------------------------------------------------------
+    /**
+    * Test removing a missing artist and missing song
+    *
+    * @throws Exception
+    */
+    public void testRemoveMissing() throws Exception {
+        it = new SongsDB();
+        it.create(11, 32);
+
+        assertEquals("|Nada| does not exist in the Artist database",
+            it.remove("artist", "Nada"));
+        assertEquals("|Nada| does not exist in the Song database",
+            it.remove("song", "Nada"));
+    }
+    
+    // ----------------------------------------------------------
+    /**
+    * Test print routing
+    *
+    * @throws Exception
+    */
+    public void testRemoveRoutes() throws Exception {
+        it = new SongsDB();
+        it.create(11, 64);
+
+        it.insert("The Marias", "No One Noticed");
+
+        assertEquals("|No One Noticed| is removed from the Song database",
+            it.remove("song", "No One Noticed"));
+        assertEquals("|The Marias| is removed from the Artist database",
+            it.remove("artist", "The Marias"));
+    }
+    
+    // ----------------------------------------------------------
+    /**
+    * Test the isPowerOfTwo helper
+    *
+    * @throws Exception
+    */
+    public void testIsPowerOfTwo() throws Exception {
+        it = new SongsDB();
+
+        assertEquals("", it.create(11, 2));
+
+        it = new SongsDB();
+        assertEquals("Initial memory manager size must be a power of 2",
+            it.create(11, 6));
     }
 }
 

@@ -227,7 +227,7 @@ public class Hash {
 
 		// While the current position is not null, take a step of
 		// quadratic probing
-		while (hashTable[i] != null) {
+		while (hashTable[i] != null && j < hashTable.length) {
 			// If the handle at the current position matches the handle, return
 			// the current index
 			if (hashTable[i] == handle) {
@@ -262,7 +262,7 @@ public class Hash {
 
 		// While the current position is not null, take a step of
 		// quadratic probing
-		while (hashTable[i] != null) {
+		while (hashTable[i] != null && j < hashTable.length) {
 			// For each position that is not null and is not a tombstone...
 			if (hashTable[i] != TOMBSTONE) {
 				// Use the memory handle from the table at the current position
@@ -279,12 +279,14 @@ public class Hash {
 					return i;
 				}
 
-				// Taking a step of quadratic probing
-				i = colResStep(homeSlot, j);
-
-				// Iterating the quadratic probing iteration count
-				j++;
+//				// Taking a step of quadratic probing
+//				i = colResStep(homeSlot, j);
+//
+//				// Iterating the quadratic probing iteration count
+//				j++;
 			}
+			i = colResStep(homeSlot, j);
+			j++;
 		}
 		// If data not found within table by the time the end of the path is reached,
 		// return -1
