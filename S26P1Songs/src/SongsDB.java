@@ -116,8 +116,8 @@ public class SongsDB implements Songs
         }
         
         // test if empty
-        if (artistString == null || artistString.isEmpty() || songString == null
-            || songString.isEmpty())
+        if (artistString == null || artistString.isEmpty() || songString == 
+            null || songString.isEmpty())
         {
             return "Input strings cannot be null or empty";
         }
@@ -132,7 +132,7 @@ public class SongsDB implements Songs
         
         
         
-        //Remembering the old memory pool and hash table size to compare after insert
+        //Remembering memory pool and hash table size to compare after insert
         int oldPoolSize = mm.poolSize;
         int oldHashSize = artist.hashTable.length;
         
@@ -147,7 +147,8 @@ public class SongsDB implements Songs
         //Checking if memory pool doubled
         if (mm.poolSize > oldPoolSize)
         {
-            ans.append("Memory pool expanded to be " + mm.poolSize + " bytes\r\n");
+            ans.append("Memory pool expanded to be " + mm.poolSize + 
+                " bytes\r\n");
         }
         //Checking if artist hash table doubled
         if (artist.hashTable.length > oldHashSize)
@@ -156,15 +157,17 @@ public class SongsDB implements Songs
         }
         
         if (artistDuplicate) {
-            ans.append("|" + artistString + "| duplicates a record already in the Artist database\r\n");
+            ans.append("|" + artistString + "| duplicates a record already in "
+                + "the Artist database\r\n");
         }
         else
         {
-            ans.append("|" + artistString + "| is added to the Artist database\r\n");
+            ans.append("|" + artistString + "| is added to the Artist "
+                + "database\r\n");
         }
 
         
-        //Remembering the old memory pool and hash table size to compare after insert
+        //Remembering memory pool and hash table size to compare after insert
         oldPoolSize = mm.poolSize;
         oldHashSize = song.hashTable.length;
         
@@ -178,7 +181,8 @@ public class SongsDB implements Songs
         //Checking if memory pool doubled
         if (mm.poolSize > oldPoolSize)
         {
-            ans.append("Memory pool expanded to be " + mm.poolSize + " bytes\r\n");
+            ans.append("Memory pool expanded to be " + mm.poolSize + 
+                " bytes\r\n");
         }
         //Checking if song hash table doubled
         if (song.hashTable.length > oldHashSize)
@@ -187,11 +191,13 @@ public class SongsDB implements Songs
         }
         
         if (songDuplicate) {
-            ans.append("|" + songString + "| duplicates a record already in the Song database\r\n");
+            ans.append("|" + songString + "| duplicates a record already in "
+                + "the Song database\r\n");
         }
         else
         {
-            ans.append("|" + songString + "| is added to the Song database\r\n");
+            ans.append("|" + songString + "| is added to the Song "
+                + "database\r\n");
         }
 
         return ans.toString();
@@ -249,10 +255,12 @@ public class SongsDB implements Songs
         {
             if (type.equals("artist"))
             {
-                return "|" + nameString + "| does not exist in the Artist database";
+                return "|" + nameString + "| does not exist in the Artist "
+                    + "database";
             }
             else {
-                return "|" + nameString + "| does not exist in the Song database";
+                return "|" + nameString + "| does not exist in the Song "
+                    + "database";
             }
         }
         
@@ -305,7 +313,9 @@ public class SongsDB implements Songs
         			MemHandle currHandle = this.artist.hashTable[i];
         			if (currHandle.getStart() != -1)
         			{
-        				String currArtistName = new String(mm.getRecord(currHandle), 0, currHandle.getRecordSize(), StandardCharsets.ISO_8859_1);
+        				String currArtistName = new String(mm.getRecord
+        				    (currHandle), 0, currHandle.getRecordSize(), 
+        				    StandardCharsets.ISO_8859_1);
             			ans += i + ": |" + currArtistName + "|\r\n";
         			}
         			else
@@ -326,7 +336,9 @@ public class SongsDB implements Songs
         			MemHandle currHandle = this.song.hashTable[i];
         			if (currHandle.getStart() != -1)
         			{
-        				String currSongName = new String(mm.getRecord(currHandle), 0, currHandle.getRecordSize(), StandardCharsets.ISO_8859_1);
+        				String currSongName = new String(mm.getRecord
+        				    (currHandle), 0, currHandle.getRecordSize(), 
+        				    StandardCharsets.ISO_8859_1);
         				ans += i + ": |" + currSongName + "|\r\n";
         			}
         			else

@@ -124,7 +124,8 @@ public class MemManager {
                 poolSize *= 2;
                 maxK++;
                 
-                release(new MemHandle(newBlock.start, newBlock.size, info.length));
+                release(new MemHandle(newBlock.start, newBlock.size, info.
+                    length));
             }
         }
         
@@ -190,7 +191,8 @@ public class MemManager {
             FreeBlock merged = new FreeBlock(mergedStart, block.size * 2);
 
             // Step 3: recursively release the merged block
-            release(new MemHandle(merged.start, merged.size, h.getRecordSize()));
+            release(new MemHandle(merged.start, merged.size, 
+                h.getRecordSize()));
         }
     }
     
@@ -264,8 +266,9 @@ public class MemManager {
         boolean hasBlocks = false;
 
         for (int i = 0; i < freeLists.length; i++) {
-            if (!freeLists[i].isEmpty()) {
-            	hasBlocks = true;
+            if (!freeLists[i].isEmpty()) 
+            {
+                hasBlocks = true;
             	ans.append(freeLists[i].getFirst().size).append(": ");
             	ans.append(freeLists[i].getStarts());
 

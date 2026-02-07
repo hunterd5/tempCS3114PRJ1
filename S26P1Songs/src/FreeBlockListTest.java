@@ -40,7 +40,7 @@ public class FreeBlockListTest {
     }
     
     @Test
-    public void PopTest() {
+    public void popTest() {
         //Empty list
         assertNull(blockList.pop());
         
@@ -81,7 +81,8 @@ public class FreeBlockListTest {
     
     @Test
     public void elementalRemoveTest() {
-    	//Removing middle element
+
+        //Removing middle element
         blockList.add(testBlock1);
         blockList.add(testBlock2);
         blockList.add(testBlock3);
