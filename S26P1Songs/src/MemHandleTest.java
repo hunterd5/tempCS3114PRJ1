@@ -24,4 +24,16 @@ public class MemHandleTest {
         assertEquals(8, h2.getStart());
         assertEquals(16, h2.getBlockSize());
     }
+    
+    @Test
+    public void testGetRecordSize() {
+        MemHandle h1 = new MemHandle(0, 8, 5);
+        MemHandle h2 = new MemHandle(8, 16, 5);
+
+        assertEquals(5, h1.getRecordSize());
+        assertEquals(8, h1.getBlockSize());
+
+        assertEquals(5, h2.getRecordSize());
+        assertEquals(16, h2.getBlockSize());
+    }
 }

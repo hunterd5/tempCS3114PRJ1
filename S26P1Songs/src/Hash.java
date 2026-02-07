@@ -1,10 +1,17 @@
 import java.nio.charset.StandardCharsets;
 
+
+/**
+ * Hash table using the "sfold" hash function with quadratic probing for collision 
+ * resolution
+ *
+ * @author Katelyn Cao, Hunter Dillon
+ * @version feb 6, 2026
+ */
 public class Hash {
 
-	/** Tombstone stand-in */
+	/** Tombstone representation */
 	private static final MemHandle TOMBSTONE = new MemHandle(-1, -1, -1);
-
 	/** Hash Table */
 	MemHandle[] hashTable;
 	/** Memory Manager */
@@ -166,6 +173,13 @@ public class Hash {
 		}
 	}
 
+	/**
+	 * Removes a string from the hash table and returns the memory handle that 
+	 * corresponded to it
+	 * 
+	 * @param data - String being searched for
+	 * @return - The memory handle of the string stored within the hash table
+	 */
 	public MemHandle remove(String data) {
 		// Finding the initial index to search using the hash function
 		int initialIndex = h(data, m);
@@ -189,6 +203,9 @@ public class Hash {
 			return null;
 	}
 
+	
+	
+	
 	// =========================================================================================
 	// HELPER FUNCTIONS
 	// =========================================================================================
