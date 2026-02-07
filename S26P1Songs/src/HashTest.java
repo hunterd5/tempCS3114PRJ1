@@ -177,22 +177,5 @@ public class HashTest {
 	    assertEquals("0", hashTest.printTable());
 	}
 	
-//	@Test
-//	public void getReturnsNotFoundWhenHandleNotInTableTest() {
-//	    MemManager mm = new MemManager(256);
-//	    int m = 10;
-//
-//	    Hash hashTest = new Hash(m, mm);
-//	    Hash hashTest2 = new Hash(m, mm);
-//
-//	    MemHandle h1 = hashTest.insert("present");
-//	    MemHandle h2 = hashTest2.insert("missing");
-//
-//	    assertEquals("present", hashTest.get(h1, m));
-//
-//	    // h2 points to real bytes in the SAME memory manager,
-//	    // but the handle object is not in hashTest's table, so it must return "not found"
-//	    assertEquals("Data not found within hash table", hashTest.get(h2, m));
-//	}
 	
 }
