@@ -425,7 +425,6 @@ public class SongsTest extends TestCase {
     */
     public void testIsPowerOfTwo() throws Exception {
         it = new SongsDB();
-
         assertEquals("", it.create(11, 2));
 
         it = new SongsDB();

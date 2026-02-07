@@ -124,4 +124,75 @@ public class HashTest {
 
 	}
 	
+	@Test
+	public void testContains() {
+	    MemManager mm = new MemManager(64);
+	    int m = 10;
+	    Hash hashTest = new Hash(m, mm);
+
+	    hashTest.insert("alpha");
+	    hashTest.insert("beta");
+
+	    assertTrue(hashTest.contains("alpha"));
+	    assertTrue(hashTest.contains("beta"));
+
+	    hashTest.remove("alpha");
+
+	    assertFalse(hashTest.contains("alpha"));
+	    assertTrue(hashTest.contains("beta"));
+	}
+	
+	@Test
+	public void testRehashData() {
+	    MemManager mm = new MemManager(128);
+	    int m = 4;
+	    Hash hashTest = new Hash(m, mm);
+
+	    hashTest.insert("A");
+	    hashTest.insert("B");
+	    hashTest.insert("C");
+
+	    hashTest.rehash();
+
+	    assertTrue(hashTest.contains("A"));
+	    assertTrue(hashTest.contains("B"));
+	    assertTrue(hashTest.contains("C"));
+	}
+	
+	@Test
+	public void testRemovetablePop() {
+	    MemManager mm = new MemManager(128);
+	    int m = 10;
+	    Hash hashTest = new Hash(m, mm);
+
+	    MemHandle h1 = hashTest.insert("one");
+	    MemHandle h2 = hashTest.insert("two");
+
+	    assertEquals("2", hashTest.printTable());
+
+	    assertTrue(hashTest.remove(h1));
+	    assertEquals("1", hashTest.printTable());
+
+	    assertTrue(hashTest.remove("two") != null);
+	    assertEquals("0", hashTest.printTable());
+	}
+	
+//	@Test
+//	public void getReturnsNotFoundWhenHandleNotInTableTest() {
+//	    MemManager mm = new MemManager(256);
+//	    int m = 10;
+//
+//	    Hash hashTest = new Hash(m, mm);
+//	    Hash hashTest2 = new Hash(m, mm);
+//
+//	    MemHandle h1 = hashTest.insert("present");
+//	    MemHandle h2 = hashTest2.insert("missing");
+//
+//	    assertEquals("present", hashTest.get(h1, m));
+//
+//	    // h2 points to real bytes in the SAME memory manager,
+//	    // but the handle object is not in hashTest's table, so it must return "not found"
+//	    assertEquals("Data not found within hash table", hashTest.get(h2, m));
+//	}
+	
 }
