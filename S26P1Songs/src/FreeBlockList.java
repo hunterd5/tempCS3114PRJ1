@@ -11,55 +11,55 @@ public class FreeBlockList {
     * relevant to linked list class
     */
     private static class Node {
-		/** The FreeBlock stored within a single node */
-		FreeBlock block;
-		/** The next node within the linked list */
-		Node next;
+        /** The FreeBlock stored within a single node */
+        FreeBlock block;
+        /** The next node within the linked list */
+        Node next;
 
-		/**
-		* Initializes a node by setting the FreeBlock data within and 
-		* setting the next node as null
-		* 
-		* @param block the FreeBlock being placed into the node
-		*/
-		Node(FreeBlock block) {
-			this.block = block;
-			this.next = null;
-		}
-	}
+        /**
+        * Initializes a node by setting the FreeBlock data within and 
+        * setting the next node as null
+        * 
+        * @param block the FreeBlock being placed into the node
+        */
+        Node(FreeBlock block) {
+            this.block = block;
+            this.next = null;
+        }
+    }
 
-	/**
-	 * The first node found at front of the linked list where all operations
-	 * begin
-	 */
-	private Node head;
+    /**
+     * The first node found at front of the linked list where all operations
+     * begin
+     */
+    private Node head;
+    
+    /**
+     * Constructor function
+     */
+    public FreeBlockList() {
+    	// Initializing the head to null for a new, empty list
+    	head = null;
+    }
 
-	/**
-	 * Constructor function
-	 */
-	public FreeBlockList() {
-		// Initializing the head to null for a new, empty list
-		head = null;
-	}
-
-	/**
-	 * Method to print out the starting position of all free blocks within 
-	 * the linked list
-	 * 
-	 * @return String containing start positions of all free blocks in list
-	 */
-	public String getStarts() {
-		// Creating a new string builder to store the return value
-		StringBuilder ans = new StringBuilder();
-		// Creating a current node holder to iterate through the list
-		Node curr = head;
-		// While the current node we are checking is not null...
-		while (curr != null) {
-			// Add the block's starting location to the string
-			ans.append(curr.block.start).append(" ");
-			// Iterate to the next node within the list
-			curr = curr.next;
-		}
+    /**
+     * Method to print out the starting position of all free blocks within 
+     * the linked list
+     * 
+     * @return String containing start positions of all free blocks in list
+     */
+    public String getStarts() {
+    	// Creating a new string builder to store the return value
+        StringBuilder ans = new StringBuilder();
+	    // Creating a current node holder to iterate through the list
+	    Node curr = head;
+	    // While the current node we are checking is not null...
+	    while (curr != null) {
+	        // Add the block's starting location to the string
+            ans.append(curr.block.start).append(" ");
+            // Iterate to the next node within the list
+            curr = curr.next;
+        }
 		// Returning final list of starting locations within the list
 		return ans.toString();
 	}

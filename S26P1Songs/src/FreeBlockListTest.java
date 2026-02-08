@@ -186,8 +186,8 @@ public class FreeBlockListTest {
     public void getStartsTest()
     {
         assertEquals("", blockList.getStarts());
-    	
-    	blockList.add(testBlock1);
+        
+        blockList.add(testBlock1);
         assertEquals("0 ", blockList.getStarts());
         
         blockList.add(testBlock2);

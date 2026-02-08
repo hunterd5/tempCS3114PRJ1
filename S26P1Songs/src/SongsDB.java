@@ -258,10 +258,8 @@ public class SongsDB implements Songs
                 return "|" + nameString + "| does not exist in the Artist "
                     + "database";
             }
-            else {
-                return "|" + nameString + "| does not exist in the Song "
-                    + "database";
-            }
+            return "|" + nameString + "| does not exist in the Song "
+                + "database";
         }
         
         mm.release(rm);
@@ -270,9 +268,7 @@ public class SongsDB implements Songs
         {
             return "|" + nameString + "| is removed from the Artist database";
         }
-        else {
-            return "|" + nameString + "| is removed from the Song database";
-        }
+        return "|" + nameString + "| is removed from the Song database";
         
     }
 
@@ -305,18 +301,19 @@ public class SongsDB implements Songs
         //prints according to type
         if (type.equals("artist"))
         {
-        	
-        	for (int i = 0; i < this.artist.hashTable.length; i++)
+            for (int i = 0; i < this.artist.hashTable.length; i++)
         	{
-        		if (this.artist.hashTable[i] != null)
+        	    if (this.artist.hashTable[i] != null)
         		{
         			MemHandle currHandle = this.artist.hashTable[i];
         			if (currHandle.getStart() != -1)
         			{
-        				String currArtistName = new String(mm.getRecord
-        				    (currHandle), 0, currHandle.getRecordSize(), 
+        				String currArtistName = new String(
+        				    mm.getRecord(currHandle), 0, 
+        				    currHandle.getRecordSize(), 
         				    StandardCharsets.ISO_8859_1);
-            			ans += i + ": |" + currArtistName + "|\r\n";
+            			ans += i + ": |" + currArtistName + 
+            			    "|\r\n";
         			}
         			else
         			{
@@ -336,10 +333,12 @@ public class SongsDB implements Songs
         			MemHandle currHandle = this.song.hashTable[i];
         			if (currHandle.getStart() != -1)
         			{
-        				String currSongName = new String(mm.getRecord
-        				    (currHandle), 0, currHandle.getRecordSize(), 
+        				String currSongName = new String(
+        				    mm.getRecord(currHandle), 0,
+        				    currHandle.getRecordSize(), 
         				    StandardCharsets.ISO_8859_1);
-        				ans += i + ": |" + currSongName + "|\r\n";
+        				ans += i + ": |" + currSongName +
+        				    "|\r\n";
         			}
         			else
         			{
@@ -362,18 +361,18 @@ public class SongsDB implements Songs
         }
         
         
-    	}
+    }
     
     
     
-    	/**Checks if value is a power of two by subtracting 1 to flip 
-     * the bit and all bits below it, then AND'ing them, which 
-    	* would result in a 0 if value is a power of 2
-    	* @param x
-    	* @return True if power of 2, false if not
-    	*/
-    	private boolean isPowerOfTwo(int x)
-    	{
-        	return (x & (x - 1)) == 0;
-    	}
-	}
+    /**Checks if value is a power of two by subtracting 1 to flip 
+    * the bit and all bits below it, then AND'ing them, which 
+   	* would result in a 0 if value is a power of 2
+    * @param x
+    * @return True if power of 2, false if not
+    */
+    private boolean isPowerOfTwo(int x)
+    {
+        return (x & (x - 1)) == 0;
+    }
+}
