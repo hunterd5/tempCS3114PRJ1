@@ -111,7 +111,7 @@ public class FreeBlockListTest {
     
     @Test
     public void multipleRemoveTest() {
-    	//Removing all elements element
+        //Removing all elements element
         blockList.add(testBlock1);
         blockList.add(testBlock2);
         blockList.add(testBlock3);
@@ -185,7 +185,7 @@ public class FreeBlockListTest {
     @Test
     public void getStartsTest()
     {
-    	assertEquals("", blockList.getStarts());
+        assertEquals("", blockList.getStarts());
     	
     	blockList.add(testBlock1);
         assertEquals("0 ", blockList.getStarts());

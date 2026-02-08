@@ -7,21 +7,21 @@
 public class FreeBlockList {
 
     /**
-	 * Private Node class representing the nodes within the linked list only
-	 * relevant to linked list class
-	 */
-	private static class Node {
+    * Private Node class representing the nodes within the linked list only
+    * relevant to linked list class
+    */
+    private static class Node {
 		/** The FreeBlock stored within a single node */
 		FreeBlock block;
 		/** The next node within the linked list */
 		Node next;
 
 		/**
-		 * Initializes a node by setting the FreeBlock data within and setting
-		 * the next node as null
-		 * 
-		 * @param block the FreeBlock being placed into the node
-		 */
+		* Initializes a node by setting the FreeBlock data within and 
+		* setting the next node as null
+		* 
+		* @param block the FreeBlock being placed into the node
+		*/
 		Node(FreeBlock block) {
 			this.block = block;
 			this.next = null;
@@ -43,10 +43,10 @@ public class FreeBlockList {
 	}
 
 	/**
-	 * Method to print out the starting position of all free blocks within the
-	 * linked list
+	 * Method to print out the starting position of all free blocks within 
+	 * the linked list
 	 * 
-	 * @return A string containing start positions of all free blocks in list
+	 * @return String containing start positions of all free blocks in list
 	 */
 	public String getStarts() {
 		// Creating a new string builder to store the return value
@@ -60,7 +60,7 @@ public class FreeBlockList {
 			// Iterate to the next node within the list
 			curr = curr.next;
 		}
-		// Returning the final list of starting locations within the list
+		// Returning final list of starting locations within the list
 		return ans.toString();
 	}
 
@@ -91,22 +91,23 @@ public class FreeBlockList {
 
 		// If block we are searching for is within the first node,
 		if (head.block == block) {
-			// Removing the head from list by setting the second as new head
+			// Removing head from list by setting second as new head
 			head = head.next;
 			return;
 		}
 
-		// Setting up a previous and current node variables as first and second
-		// nodes to iterate through the list
+		// Setting up a previous and current node variables as first 
+		// and second nodes to iterate through the list
 		Node prev = head;
 		Node curr = head.next;
 
 		// While there is data in the nodes being checked...
 		while (curr != null) {
-			// Checks if the data within the current node matches search block
+			// Checks data within current node matches search block
 			if (curr.block == block) {
-				// If so, removes the node from the list by setting the 
-			    // previous node's next node field to the current next node
+				// If so, removes node from list by setting 
+			    // the previous node's next node field to the 
+			    // current next node
 				prev.next = curr.next;
 				return;
 			}
@@ -118,28 +119,28 @@ public class FreeBlockList {
 	}
 
 	/**
-	 * Retrieving the buddy FreeBlock by iterating through the start locations
-	 * within a list of the same size
+	 * Retrieving the buddy FreeBlock by iterating through the 
+	 * start locations within a list of the same size
 	 * 
 	 * @param buddyStart - The start index that we are looking for
 	 * @return The FreeBlock with the start location we are looking for
 	 */
 	public FreeBlock findBuddy(int buddyStart) {
-		// Setting the current node at the start of the list for iterations
+		// Setting current node at the start of list for iterations
 		Node curr = head;
 		// While there is data in the current node...
 		while (curr != null) {
-			// Check if node with data contains a block that starts at the
-		    // desired start point
+			// Check if node with data contains a block that
+		    // starts at desired start point
 			if (curr.block.start == buddyStart) {
-				// Returns the block from the list that represents the buddy
-			    // to a block to be released
+				// Returns block from the list that represents
+			    // the buddy to a block to be released
 				return curr.block;
 			}
 			// Iterating through the nodes
 			curr = curr.next;
 		}
-		// If the block with the desired start point is not found within
+		// If block with desired start point is not found within
 		// list, return null
 		return null;
 	}

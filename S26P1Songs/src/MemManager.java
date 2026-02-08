@@ -269,8 +269,8 @@ public class MemManager {
             if (!freeLists[i].isEmpty()) 
             {
                 hasBlocks = true;
-            	ans.append(freeLists[i].getFirst().size).append(": ");
-            	ans.append(freeLists[i].getStarts());
+                ans.append(freeLists[i].getFirst().size).append(": ");
+                ans.append(freeLists[i].getStarts());
 
                 // End line
                 ans.append("\n");
