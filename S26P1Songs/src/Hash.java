@@ -481,11 +481,14 @@ public class Hash
         // Going through all the items in the old hash table
         for (int i = 0; i < this.hashTable.length; i++)
         {
+
+            // Retrieve the handle
+            MemHandle handle = currHashTableCopy[i];
+
             // If there is a handle at this position...
-            if (currHashTableCopy[i] != null)
+            if (handle != null && handle != TOMBSTONE)
             {
-                // Retrieve the handle
-                MemHandle handle = currHashTableCopy[i];
+
                 // Get string from mem manager using handle
                 byte[] byteArray = mm.getRecord(handle);
                 // Translating the bytes into the initial string
