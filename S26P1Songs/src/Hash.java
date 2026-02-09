@@ -1,14 +1,14 @@
 import java.nio.charset.StandardCharsets;
 
-
 /**
- * Hash table using the "sfold" hash function with quadratic probing for 
+ * Hash table using the "sfold" hash function with quadratic probing for
  * collision resolution
  *
  * @author Katelyn Cao, Hunter Dillon
  * @version feb 6, 2026
  */
-public class Hash {
+public class Hash
+{
 
     /** Tombstone representation */
     private static final MemHandle TOMBSTONE = new MemHandle(-1, -1, -1);
@@ -21,388 +21,499 @@ public class Hash {
     /** Table population */
     int tablePop;
 
-	/**
-	 * Create a new Hash object.
-	 *
-	 * @param init Initial size for table
-	 * @param mem    Memory manager used by this table to store objects
-	 */
-	public Hash(int init, MemManager mem) {
-		// Creating array of memory handles using passed in size
-		hashTable = new MemHandle[init];
-		// Initializing the memory manager to the field
-		mm = mem;
-		// Initializing the hash table current size to the field
-		m = init;
-	}
+    /**
+     * Create a new Hash object.
+     *
+     * @param init
+     *            Initial size for table
+     * @param mem
+     *            Memory manager used by this table to store objects
+     */
+    public Hash(int init, MemManager mem)
+    {
+        // Creating array of memory handles using passed in size
+        hashTable = new MemHandle[init];
+        // Initializing the memory manager to the field
+        mm = mem;
+        // Initializing the hash table current size to the field
+        m = init;
+    }
 
-	/**
-	 * Compute the hash function. Uses the "sfold" method from the OpenDSA 
-	 * module on hash functions
-	 *
-	 * @param s The string that we are hashing
-	 * @param size The size of the hash table
-	 * @return The home slot for that string
-	 */
-	public int h(String s, int size) {
-		long sum = 0;
-		long mult = 1;
-		for (int i = 0; i < s.length(); i++) {
-			mult = (i % 4 == 0) ? 1 : mult * 256;
-			sum += s.charAt(i) * mult;
-		}
-		return (int) (Math.abs(sum) % size);
-	}
 
-	/**
-	 * Takes in a memory handle containing the start position and
-	 * start size of a record in storage and the current table size
-	 * m to return the string value of the stored record
-	 * 
-	 * @param handle
-	 * @param size     table size
-	 * @return Real string value from memory manager
-	 */
-	public String get(MemHandle handle, int size) {
+    /**
+     * Compute the hash function. Uses the "sfold" method from the OpenDSA
+     * module on hash functions
+     *
+     * @param s
+     *            The string that we are hashing
+     * @param size
+     *            The size of the hash table
+     * @return The home slot for that string
+     */
+    public int h(String s, int size)
+    {
+        long sum = 0;
+        long mult = 1;
+        for (int i = 0; i < s.length(); i++)
+        {
+            mult = (i % 4 == 0) ? 1 : mult * 256;
+            sum += s.charAt(i) * mult;
+        }
+        return (int)(Math.abs(sum) % size);
+    }
 
-	    /* Creating a byte array that contains the data retrieved
-	    * from memory manager to be translated to actual string*/
-		byte[] byteArray = mm.getRecord(handle);
 
-		/* Transferring new byte array into a string to know
-		 * where to begin searching in the hash table */
-		String stringData = new String(byteArray, 0, 
-		    handle.getRecordSize(), 
-		    StandardCharsets.ISO_8859_1);
+    /**
+     * Takes in a memory handle containing the start position and start size of
+     * a record in storage and the current table size m to return the string
+     * value of the stored record
+     * 
+     * @param handle
+     * @param size
+     *            table size
+     * @return Real string value from memory manager
+     */
+    public String get(MemHandle handle, int size)
+    {
 
-		/* Using the hash function to find initial index to search 
-		 * at within the hash table using the found string and current
-		 * table size*/
-		int initialIndex = h(stringData, size);
+        /*
+         * Creating a byte array that contains the data retrieved from memory
+         * manager to be translated to actual string
+         */
+        byte[] byteArray = mm.getRecord(handle);
 
-		/* Checking all positions within quadratic probing path for
-		 * a match to the handle, returning the index if it is a 
-		 * match (returns -1 if handle not found) */
-		int i = getColRes(initialIndex, handle);
+        /*
+         * Transferring new byte array into a string to know where to begin
+         * searching in the hash table
+         */
+        String stringData = new String(
+            byteArray,
+            0,
+            handle.getRecordSize(),
+            StandardCharsets.ISO_8859_1);
 
-		/* Returning  translated string from memory manager if it is
-		 * found within the hash table */
-		if (i >= 0) {
-			return stringData;
-		}
+        /*
+         * Using the hash function to find initial index to search at within the
+         * hash table using the found string and current table size
+         */
+        int initialIndex = h(stringData, size);
 
-		return "Data not found within hash table";
-	}
+        /*
+         * Checking all positions within quadratic probing path for a match to
+         * the handle, returning the index if it is a match (returns -1 if
+         * handle not found)
+         */
+        int i = getColRes(initialIndex, handle);
 
-	/**
-	 * Inserts a string and using the current hash table size and returns 
-	 * Handle generated by the memory manager after being inserted.
-	 * 
-	 * @param data - The string being inserted
-	 * @return The memory handle containing the start position and size of 
-	 *         data inserted
-	 */
-	public MemHandle insert(String data) {
+        /*
+         * Returning translated string from memory manager if it is found within
+         * the hash table
+         */
+        if (i >= 0)
+        {
+            return stringData;
+        }
 
-	    /* If adding this record into hash table would make the table
-	    * >50% full, double the hash table size and rehash with new
-	     * size to make a better distribution  */
-		if (tablePop + 1 > hashTable.length / 2) {
-			this.doubleHashSize();
-			this.rehash();
-		}
+        return "Data not found within hash table";
+    }
 
-		/* Calculating the initial position to allocate to within hash 
-		 * table using the hash function */
-		int i = h(data, m);
 
-		/* While there has not been an eligible position found,
-		 * keep iterating through the hash table using quadratic probing
-		 * (SHOULD NEVER FAIL SINCE HASH TABLE ALWAYS <50% FULL) */
-		i = insertColRes(i);
+    /**
+     * Inserts a string and using the current hash table size and returns Handle
+     * generated by the memory manager after being inserted.
+     * 
+     * @param data
+     *            - The string being inserted
+     * @return The memory handle containing the start position and size of data
+     *             inserted
+     */
+    public MemHandle insert(String data)
+    {
 
-		/* Inserting the string in the form of a byte array into
-		 * the memory manager and acquiring the handle generated */
-		MemHandle handle = mm.insert(data.getBytes());
+        /*
+         * If adding this record into hash table would make the table >50% full,
+         * double the hash table size and rehash with new size to make a better
+         * distribution
+         */
+        if (tablePop + 1 > hashTable.length / 2)
+        {
+            this.doubleHashSize();
+            this.rehash();
+        }
 
-		/* Place the generated handle within the hash table at the
-		 * first available spot*/
-		hashTable[i] = handle;
+        /*
+         * Calculating the initial position to allocate to within hash table
+         * using the hash function
+         */
+        int i = h(data, m);
 
-		/* Increase the current table population by 1 */
-		tablePop++;
+        /*
+         * While there has not been an eligible position found, keep iterating
+         * through the hash table using quadratic probing (SHOULD NEVER FAIL
+         * SINCE HASH TABLE ALWAYS <50% FULL)
+         */
+        i = insertColRes(i);
 
-		/* Returning the generated handle that was inserted
-		 * into hash table */
-		return handle;
-	}
+        /*
+         * Inserting the string in the form of a byte array into the memory
+         * manager and acquiring the handle generated
+         */
+        MemHandle handle = mm.insert(data.getBytes());
 
-	/**
-	 * Removes value from hash table and replaces it with a tombstone.
-	 * 
-	 * @param handle - The handle to be removed
-	 * @return True if successful, false if value not found in hash table
-	 */
-	public boolean remove(MemHandle handle) {
-	    /* Retrieving the bytes corresponding to the passed in handle 
-	    * from memory manager  */
-		byte[] bytes = mm.getRecord(handle);
+        /*
+         * Place the generated handle within the hash table at the first
+         * available spot
+         */
+        hashTable[i] = handle;
 
-		/* Assembling those bytes back into a string */
-		String key = new String(bytes, 0, handle.getRecordSize(), 
-		    StandardCharsets.ISO_8859_1);
+        /* Increase the current table population by 1 */
+        tablePop++;
 
-		/* Finding the initial index to search using the
-		 * hash function */
-		int initialIndex = h(key, m);
+        /*
+         * Returning the generated handle that was inserted into hash table
+         */
+        return handle;
+    }
 
-		/* Searches the quadratic probing path for handles matching one 
-		 * being searched for, returning -1 if not found within table */
-		int i = getColRes(initialIndex, handle);
 
-		/* If i is found within the table, place a tombstone there, 
-		 * reduce table population by 1, and return true */
-		if (i >= 0) {
-			// Place a tombstone at current index
-			hashTable[i] = TOMBSTONE;
+    /**
+     * Removes value from hash table and replaces it with a tombstone.
+     * 
+     * @param handle
+     *            - The handle to be removed
+     * @return True if successful, false if value not found in hash table
+     */
+    public boolean remove(MemHandle handle)
+    {
+        /*
+         * Retrieving the bytes corresponding to the passed in handle from
+         * memory manager
+         */
+        byte[] bytes = mm.getRecord(handle);
 
-			// reducing the table population by 1
-			tablePop--;
+        /* Assembling those bytes back into a string */
+        String key = new String(
+            bytes,
+            0,
+            handle.getRecordSize(),
+            StandardCharsets.ISO_8859_1);
 
-			// returning true for successful removal from hash table
-			return true;
-		}
-		// if value not found within probing path, return false
-		else {
-			return false;
-		}
-	}
+        /*
+         * Finding the initial index to search using the hash function
+         */
+        int initialIndex = h(key, m);
 
-	/**
-	 * Removes a string from hash table and returns memory handle that 
-	 * corresponded to it
-	 * 
-	 * @param data - String being searched for
-	 * @return - The memory handle of string stored within the hash table
-	 */
-	public MemHandle remove(String data) {
-		// Finding the initial index to search using the hash function
-		int initialIndex = h(data, m);
+        /*
+         * Searches the quadratic probing path for handles matching one being
+         * searched for, returning -1 if not found within table
+         */
+        int i = getColRes(initialIndex, handle);
 
-		/* Searching through probing path for a handle that stores the 
-		 * data in the memory manager  */
-		int i = getColRes(initialIndex, data);
+        /*
+         * If i is found within the table, place a tombstone there, reduce table
+         * population by 1, and return true
+         */
+        if (i >= 0)
+        {
+            // Place a tombstone at current index
+            hashTable[i] = TOMBSTONE;
 
-		/* If the data is found, place a tombstone there, subtract 1 
-		 * from the current table population, place a tombstone where
-		 * handle was, and return the handle that was removed */
-		if (i >= 0) {
-			MemHandle handle = hashTable[i];
-			hashTable[i] = TOMBSTONE;
-			tablePop--;
-			return handle;
-		}
-		// If not found, return a null handle
-		else
-			return null;
-	}
+            // reducing the table population by 1
+            tablePop--;
 
-	
-	
-	
-	// ===============================================
-	// HELPER FUNCTIONS
-	// ===============================================
+            // returning true for successful removal from hash table
+            return true;
+        }
+        // if value not found within probing path, return false
+        else
+        {
+            return false;
+        }
+    }
 
-	/**
-	 * Executes the search for a specific handle through quadratic probing 
-	 * giving an initial index and the handle being searched for
-	 * 
-	 * @param homeSlot - Initial index from hash function
-	 * @param handle   - The handle being searched for
-	 * @return The index the handle was found at, -1 if not in probing path
-	 */
-	private int getColRes(int homeSlot, MemHandle handle) {
-		// Assigning the quadratic probing iteration count to 0
-		int j = 0;
 
-		// Assigning initial current position to found position
-		int i = homeSlot;
+    /**
+     * Removes a string from hash table and returns memory handle that
+     * corresponded to it
+     * 
+     * @param data
+     *            - String being searched for
+     * @return - The memory handle of string stored within the hash table
+     */
+    public MemHandle remove(String data)
+    {
+        // Finding the initial index to search using the hash function
+        int initialIndex = h(data, m);
 
-		/* While the current position is not null, take a
-		 *  step of quadratic probing */
-		while (hashTable[i] != null && j < hashTable.length) {
-		    /* If the handle at the current position matches handle,
-		    * return the current index */
-			if (hashTable[i] == handle) {
-				return i;
-			}
+        /*
+         * Searching through probing path for a handle that stores the data in
+         * the memory manager
+         */
+        int i = getColRes(initialIndex, data);
 
-			// Taking a step of quadratic probing
-			i = colResStep(homeSlot, j);
+        /*
+         * If the data is found, place a tombstone there, subtract 1 from the
+         * current table population, place a tombstone where handle was, and
+         * return the handle that was removed
+         */
+        if (i >= 0)
+        {
+            MemHandle handle = hashTable[i];
+            hashTable[i] = TOMBSTONE;
+            tablePop--;
+            return handle;
+        }
+        // If not found, return a null handle
+        else
+            return null;
+    }
 
-			// Iterating the quadratic probing iteration count
-			j++;
-		}
+    // ===============================================
+    // HELPER FUNCTIONS
+    // ===============================================
 
-		/* Returning -1 if reached end of probing path without 
-		 * finding handle */
-		return -1;
-	}
 
-	/**
-	 * Executes the search for a specific string through quadratic probing 
-	 * giving an initial index and the string being searched for
-	 * 
-	 * @param homeSlot - Initial index calculated through hash function
-	 * @param data     - String being searched for
-	 * @return The index of data within the hash table, -1 if not found
-	 */
-	private int getColRes(int homeSlot, String data) {
-		// Assigning the quadratic probing iteration count to 0
-		int j = 0;
+    /**
+     * Executes the search for a specific handle through quadratic probing
+     * giving an initial index and the handle being searched for
+     * 
+     * @param homeSlot
+     *            - Initial index from hash function
+     * @param handle
+     *            - The handle being searched for
+     * @return The index the handle was found at, -1 if not in probing path
+     */
+    private int getColRes(int homeSlot, MemHandle handle)
+    {
+        // Assigning the quadratic probing iteration count to 0
+        int j = 0;
 
-		// Assigning initial current position to found position
-		int i = homeSlot;
+        // Assigning initial current position to found position
+        int i = homeSlot;
 
-		/* While the current position is not null, take a step 
-		 * of quadratic probing */
-		while (hashTable[i] != null && j < hashTable.length) {
-			// For each position not null and not tombstone
-			if (hashTable[i] != TOMBSTONE) {
-			    /* Use the memory handle from the table at the
-			    * current position */
-				MemHandle handle = hashTable[i];
+        /*
+         * While the current position is not null, take a step of quadratic
+         * probing
+         */
+        while (hashTable[i] != null && j < hashTable.length)
+        {
+            /*
+             * If the handle at the current position matches handle, return the
+             * current index
+             */
+            if (hashTable[i] == handle)
+            {
+                return i;
+            }
 
-				/* Use  handle to find the record of bytes
-				 * in memory manager */
-				byte[] bytes = mm.getRecord(handle);
+            // Taking a step of quadratic probing
+            i = colResStep(homeSlot, j);
 
-				/* Convert  bytes to string to compare to 
-				 * the passed in string */
-				String stored = new String(bytes, 0,
-				    handle.getRecordSize(), 
-				    StandardCharsets.ISO_8859_1);
+            // Iterating the quadratic probing iteration count
+            j++;
+        }
 
-				/* If they are they same, return the index
-				 * that it was found */
-				if (stored.equals(data)) {
-					return i;
-				}
-			}
-			// Taking a step of quadratic probing
-			i = colResStep(homeSlot, j);
-			// Iterating the quadratic probing iteration count
-			j++;
-		}
-		/* If data not found within table by the time the end of
-		 * the path is reached, return -1 */
-		return -1;
-	}
+        /*
+         * Returning -1 if reached end of probing path without finding handle
+         */
+        return -1;
+    }
 
-	/**
-	 * Finding the first position in the hash table available for 
-	 * insert giving an initial index calculated through the hash 
-	 * function (SHOULD NEVER FAIL SINCE HASH TABLE SIZE WILL DOUBLE
-	 * AND REHASH IF >50% FULL)
-	 * 
-	 * @param homeSlot - The initial search position
-	 * @return The index to insert at
-	 */
-	private int insertColRes(int homeSlot) {
-		// Assigning the quadratic probing iteration count to 0
-		int j = 0;
 
-		/* Assigning the initial current position to the found
-		 * initial position */
-		int i = homeSlot;
+    /**
+     * Executes the search for a specific string through quadratic probing
+     * giving an initial index and the string being searched for
+     * 
+     * @param homeSlot
+     *            - Initial index calculated through hash function
+     * @param data
+     *            - String being searched for
+     * @return The index of data within the hash table, -1 if not found
+     */
+    private int getColRes(int homeSlot, String data)
+    {
+        // Assigning the quadratic probing iteration count to 0
+        int j = 0;
 
-		/* While current position is not null or a tombstone, take
-		 * a step of quadratic probing  */
-		while (hashTable[i] != null && hashTable[i] != TOMBSTONE) {
-			// Taking a step of quadratic probing
-			i = colResStep(homeSlot, j);
-			// Iterating the quadratic probing iteration count
-			j++;
-		}
+        // Assigning initial current position to found position
+        int i = homeSlot;
 
-		// Returning the first i that is available for insertion
-		return i;
-	}
+        /*
+         * While the current position is not null, take a step of quadratic
+         * probing
+         */
+        while (hashTable[i] != null && j < hashTable.length)
+        {
+            // For each position not null and not tombstone
+            if (hashTable[i] != TOMBSTONE)
+            {
+                /*
+                 * Use the memory handle from the table at the current position
+                 */
+                MemHandle handle = hashTable[i];
 
-	/**
-	 * Taking a step of quadratic probing using the initial index and the 
-	 * current probing iteration
-	 * 
-	 * @param homeSlot - Initial hash function allocation
-	 * @param j        - Quadratic probing iteration count
-	 * @return Next index to check through quadratic probing
-	 */
-	private int colResStep(int homeSlot, int j) {
-	    /* Calculating the next probe spot and wrapping the value 
-	    * around the current size of the hash table  */
-		return (homeSlot + j * j) % m;
-	}
+                /*
+                 * Use handle to find the record of bytes in memory manager
+                 */
+                byte[] bytes = mm.getRecord(handle);
 
-	/**
-	 * Doubling the current hash table size
-	 */
-	public void doubleHashSize() {
-		// Doubling the current hash table size
-		m *= 2;
-		// Creating a new hash table using the updated size
-		MemHandle[] newHashTable = new MemHandle[m];
-		/* Copying all old values from old hash table into the
-		 * new hash table */
-		System.arraycopy(hashTable, 0, newHashTable, 0, 
-		    hashTable.length);
-		// Setting the new, larger hash table as the new hash table
-		hashTable = newHashTable;
-	}
+                /*
+                 * Convert bytes to string to compare to the passed in string
+                 */
+                String stored = new String(
+                    bytes,
+                    0,
+                    handle.getRecordSize(),
+                    StandardCharsets.ISO_8859_1);
 
-	/**
-	 * Rehashing the current hash table by iterating through the table from 
-	 * start to finish and re-inserting all handles
-	 */
-	public void rehash() {
-		// Creating a copy of the current hash table
-		MemHandle[] currHashTableCopy = hashTable;
+                /*
+                 * If they are they same, return the index that it was found
+                 */
+                if (stored.equals(data))
+                {
+                    return i;
+                }
+            }
+            // Taking a step of quadratic probing
+            i = colResStep(homeSlot, j);
+            // Iterating the quadratic probing iteration count
+            j++;
+        }
+        /*
+         * If data not found within table by the time the end of the path is
+         * reached, return -1
+         */
+        return -1;
+    }
 
-		// Emptying out the old hash table
-		hashTable = new MemHandle[currHashTableCopy.length];
 
-		 /* Reseting table population to 0 to prepare to insert the 
-		 * old handles */
-		tablePop = 0;
+    /**
+     * Finding the first position in the hash table available for insert giving
+     * an initial index calculated through the hash function (SHOULD NEVER FAIL
+     * SINCE HASH TABLE SIZE WILL DOUBLE AND REHASH IF >50% FULL)
+     * 
+     * @param homeSlot
+     *            - The initial search position
+     * @return The index to insert at
+     */
+    private int insertColRes(int homeSlot)
+    {
+        // Assigning the quadratic probing iteration count to 0
+        int j = 0;
 
-		// Going through all the items in the old hash table
-		for (int i = 0; i < this.hashTable.length; i++) {
-			// If there is a handle at this position...
-			if (currHashTableCopy[i] != null) {
-				// Retrieve the handle
-				MemHandle handle = currHashTableCopy[i];
-				// Get string from mem manager using handle
-				byte[] byteArray = mm.getRecord(handle);
-				// Translating the bytes into the initial string
-				String value = new String(byteArray, 0,
-				    handle.getRecordSize(),
-				    StandardCharsets.ISO_8859_1);
-				// Release current handle from memory manager
-				mm.release(handle);
-				// Re-insert string back into new hash table
-				this.insert(value);
-			}
-		}
-	}
+        /*
+         * Assigning the initial current position to the found initial position
+         */
+        int i = homeSlot;
 
-	public String printTable() {
-		StringBuilder ans = new StringBuilder();
-		ans.append(tablePop);
-		return ans.toString();
-	}
+        /*
+         * While current position is not null or a tombstone, take a step of
+         * quadratic probing
+         */
+        while (hashTable[i] != null && hashTable[i] != TOMBSTONE)
+        {
+            // Taking a step of quadratic probing
+            i = colResStep(homeSlot, j);
+            // Iterating the quadratic probing iteration count
+            j++;
+        }
 
-	public boolean contains(String data) {
-		int home = h(data, m);
-		return (getColRes(home, data) >= 0);
-	}
+        // Returning the first i that is available for insertion
+        return i;
+    }
+
+
+    /**
+     * Taking a step of quadratic probing using the initial index and the
+     * current probing iteration
+     * 
+     * @param homeSlot
+     *            - Initial hash function allocation
+     * @param j
+     *            - Quadratic probing iteration count
+     * @return Next index to check through quadratic probing
+     */
+    private int colResStep(int homeSlot, int j)
+    {
+        /*
+         * Calculating the next probe spot and wrapping the value around the
+         * current size of the hash table
+         */
+        return (homeSlot + j * j) % m;
+    }
+
+
+    /**
+     * Doubling the current hash table size
+     */
+    public void doubleHashSize()
+    {
+        // Doubling the current hash table size
+        m *= 2;
+        // Creating a new hash table using the updated size
+        MemHandle[] newHashTable = new MemHandle[m];
+        /*
+         * Copying all old values from old hash table into the new hash table
+         */
+        System.arraycopy(hashTable, 0, newHashTable, 0, hashTable.length);
+        // Setting the new, larger hash table as the new hash table
+        hashTable = newHashTable;
+    }
+
+
+    /**
+     * Rehashing the current hash table by iterating through the table from
+     * start to finish and re-inserting all handles
+     */
+    public void rehash()
+    {
+        // Creating a copy of the current hash table
+        MemHandle[] currHashTableCopy = hashTable;
+
+        // Emptying out the old hash table
+        hashTable = new MemHandle[currHashTableCopy.length];
+
+        /*
+         * Reseting table population to 0 to prepare to insert the old handles
+         */
+        tablePop = 0;
+
+        // Going through all the items in the old hash table
+        for (int i = 0; i < this.hashTable.length; i++)
+        {
+            // If there is a handle at this position...
+            if (currHashTableCopy[i] != null)
+            {
+                // Retrieve the handle
+                MemHandle handle = currHashTableCopy[i];
+                // Get string from mem manager using handle
+                byte[] byteArray = mm.getRecord(handle);
+                // Translating the bytes into the initial string
+                String value = new String(
+                    byteArray,
+                    0,
+                    handle.getRecordSize(),
+                    StandardCharsets.ISO_8859_1);
+                // Release current handle from memory manager
+                mm.release(handle);
+                // Re-insert string back into new hash table
+                this.insert(value);
+            }
+        }
+    }
+
+
+    public String printTable()
+    {
+        StringBuilder ans = new StringBuilder();
+        ans.append(tablePop);
+        return ans.toString();
+    }
+
+
+    public boolean contains(String data)
+    {
+        int home = h(data, m);
+        return (getColRes(home, data) >= 0);
+    }
 }

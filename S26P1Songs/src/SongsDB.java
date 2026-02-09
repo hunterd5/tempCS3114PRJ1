@@ -2,28 +2,28 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 /**
- * The database implementation for this project.
- * We have two hash tables and a memory manager.
+ * The database implementation for this project. We have two hash tables and a
+ * memory manager.
  *
  * @author Katelyn Cao, Hunter Dillon
  * @version feb 3, 2026
  */
-public class SongsDB implements Songs
+public class SongsDB
+    implements Songs
 {
 
     private MemManager mm;
     private Hash artist;
     private Hash song;
-    
+
     private boolean init = false;
     private int initSizeM;
     private int initSizeH;
-    
-    
+
     // ----------------------------------------------------------
     /**
-     * Create a new SongsDB object.
-     * But don't set anything -- that gets done by "create"
+     * Create a new SongsDB object. But don't set anything -- that gets done by
+     * "create"
      */
     public SongsDB()
     {
@@ -41,56 +41,58 @@ public class SongsDB implements Songs
      */
     public String create(int inHash, int inMemMan)
     {
-        //test hash size input
+        // test hash size input
         if (inHash <= 0)
         {
             init = false;
             return "Initial hash table size must be positive";
         }
-        
+
         // test memory manager input (size and power)
         if (inMemMan <= 0)
         {
             init = false;
             return "Initial memory manager size must be positive";
         }
-        
+
         if (!isPowerOfTwo(inMemMan))
         {
             init = false;
             return "Initial memory manager size must be a power of 2";
         }
-        
-        //set fields
+
+        // set fields
         mm = new MemManager(inMemMan);
         artist = new Hash(inHash, mm);
         song = new Hash(inHash, mm);
         init = true;
         initSizeM = inMemMan;
         initSizeH = inHash;
-        
+
         return "";
     }
 
 
     /**
      * Re-initialize the database
+     * 
      * @return true on successful clear of database
      */
-    public boolean clear() {
-        
-        //false if re-initialize failed
+    public boolean clear()
+    {
+
+        // false if re-initialize failed
         if (!init)
         {
             return false;
         }
-        
-        //set to new mem manager and hashes
+
+        // set to new mem manager and hashes
         mm = new MemManager(initSizeM);
         artist = new Hash(initSizeH, mm);
         song = new Hash(initSizeH, mm);
-        
-        //return true if success
+
+        // return true if success
         return true;
     }
 
@@ -114,95 +116,90 @@ public class SongsDB implements Songs
         {
             return "Database not initialized";
         }
-        
+
         // test if empty
-        if (artistString == null || artistString.isEmpty() || songString == 
-            null || songString.isEmpty())
+        if (artistString == null || artistString.isEmpty() || songString == null
+            || songString.isEmpty())
         {
             return "Input strings cannot be null or empty";
         }
-        
-        
-        
-        
+
         boolean artistDuplicate = artist.contains(artistString);
         boolean songDuplicate = song.contains(songString);
 
         StringBuilder ans = new StringBuilder();
-        
-        
-        
-        //Remembering memory pool and hash table size to compare after insert
+
+        // Remembering memory pool and hash table size to compare after insert
         int oldPoolSize = mm.poolSize;
         int oldHashSize = artist.hashTable.length;
-        
 
-        
-        //Inserting the artist
+        // Inserting the artist
         if (!artistDuplicate)
         {
             artist.insert(artistString);
         }
-        
-        //Checking if memory pool doubled
+
+        // Checking if memory pool doubled
         if (mm.poolSize > oldPoolSize)
         {
-            ans.append("Memory pool expanded to be " + mm.poolSize + 
-                " bytes\r\n");
+            ans.append(
+                "Memory pool expanded to be " + mm.poolSize + " bytes\r\n");
         }
-        //Checking if artist hash table doubled
+        // Checking if artist hash table doubled
         if (artist.hashTable.length > oldHashSize)
         {
             ans.append("Artist hash table size doubled\r\n");
         }
-        
-        if (artistDuplicate) {
-            ans.append("|" + artistString + "| duplicates a record already in "
-                + "the Artist database\r\n");
+
+        if (artistDuplicate)
+        {
+            ans.append(
+                "|" + artistString + "| duplicates a record already in "
+                    + "the Artist database\r\n");
         }
         else
         {
-            ans.append("|" + artistString + "| is added to the Artist "
-                + "database\r\n");
+            ans.append(
+                "|" + artistString + "| is added to the Artist "
+                    + "database\r\n");
         }
 
-        
-        //Remembering memory pool and hash table size to compare after insert
+        // Remembering memory pool and hash table size to compare after insert
         oldPoolSize = mm.poolSize;
         oldHashSize = song.hashTable.length;
-        
- 
-        //Inserting the song
+
+        // Inserting the song
         if (!songDuplicate)
         {
             song.insert(songString);
         }
-        
-        //Checking if memory pool doubled
+
+        // Checking if memory pool doubled
         if (mm.poolSize > oldPoolSize)
         {
-            ans.append("Memory pool expanded to be " + mm.poolSize + 
-                " bytes\r\n");
+            ans.append(
+                "Memory pool expanded to be " + mm.poolSize + " bytes\r\n");
         }
-        //Checking if song hash table doubled
+        // Checking if song hash table doubled
         if (song.hashTable.length > oldHashSize)
         {
             ans.append("Song hash table size doubled\r\n");
         }
-        
-        if (songDuplicate) {
-            ans.append("|" + songString + "| duplicates a record already in "
-                + "the Song database\r\n");
+
+        if (songDuplicate)
+        {
+            ans.append(
+                "|" + songString + "| duplicates a record already in "
+                    + "the Song database\r\n");
         }
         else
         {
-            ans.append("|" + songString + "| is added to the Song "
-                + "database\r\n");
+            ans.append(
+                "|" + songString + "| is added to the Song " + "database\r\n");
         }
 
         return ans.toString();
-        
-        
+
     }
 
 
@@ -217,40 +214,43 @@ public class SongsDB implements Songs
      * @return Error message if appropriate
      * @throws IOException
      */
-    public String remove(String type, String nameString) throws IOException {
-        
-        //test initialized
+    public String remove(String type, String nameString)
+        throws IOException
+    {
+
+        // test initialized
         if (!init)
         {
             return "Database not initialized";
         }
-        
-        //test empty/null
-        if (type == null || type.isEmpty() || nameString == null || 
-            nameString.isEmpty())
+
+        // test empty/null
+        if (type == null || type.isEmpty() || nameString == null
+            || nameString.isEmpty())
         {
             return "Input strings cannot be null or empty";
         }
-        
-        //test type
+
+        // test type
         if (!type.equals("artist") && !type.equals("song"))
         {
             return "Bad type value |" + type + "| on remove";
         }
-        
-        //find table to remove from
+
+        // find table to remove from
         Hash table;
         if (type.equals("artist"))
         {
             table = artist;
         }
-        else {
+        else
+        {
             table = song;
         }
-        
-        //remove from table
+
+        // remove from table
         MemHandle rm = table.remove(nameString);
-        
+
         if (rm == null)
         {
             if (type.equals("artist"))
@@ -261,15 +261,15 @@ public class SongsDB implements Songs
             return "|" + nameString + "| does not exist in the Song "
                 + "database";
         }
-        
+
         mm.release(rm);
-        
+
         if (type.equals("artist"))
         {
             return "|" + nameString + "| is removed from the Artist database";
         }
         return "|" + nameString + "| is removed from the Song database";
-        
+
     }
 
 
@@ -283,94 +283,95 @@ public class SongsDB implements Songs
      * @throws IOException
      */
     public String print(String type)
-        throws IOException {
-        
-        //test if initialized
+        throws IOException
+    {
+
+        // test if initialized
         if (!init)
         {
             return "Database not initialized";
         }
-        
-        //test if empty or null
+
+        // test if empty or null
         if (type == null || type.isEmpty())
         {
             return "Input strings cannot be null or empty";
         }
-        
+
         String ans = "";
-        //prints according to type
+        // prints according to type
         if (type.equals("artist"))
         {
             for (int i = 0; i < this.artist.hashTable.length; i++)
-        	{
-        	    if (this.artist.hashTable[i] != null)
-        		{
-        			MemHandle currHandle = this.artist.hashTable[i];
-        			if (currHandle.getStart() != -1)
-        			{
-        				String currArtistName = new String(
-        				    mm.getRecord(currHandle), 0, 
-        				    currHandle.getRecordSize(), 
-        				    StandardCharsets.ISO_8859_1);
-            			ans += i + ": |" + currArtistName + 
-            			    "|\r\n";
-        			}
-        			else
-        			{
-        				ans += i + ": |TOMBSTONE|\r\n";
-        			}
-        		}
-        	}
+            {
+                if (this.artist.hashTable[i] != null)
+                {
+                    MemHandle currHandle = this.artist.hashTable[i];
+                    if (currHandle.getStart() != -1)
+                    {
+                        String currArtistName = new String(
+                            mm.getRecord(currHandle),
+                            0,
+                            currHandle.getRecordSize(),
+                            StandardCharsets.ISO_8859_1);
+                        ans += i + ": |" + currArtistName + "|\r\n";
+                    }
+                    else
+                    {
+                        ans += i + ": |TOMBSTONE|\r\n";
+                    }
+                }
+            }
             return ans + "total artists: " + artist.printTable();
         }
-        
+
         else if (type.equals("song"))
         {
-        	for (int i = 0; i < this.song.hashTable.length; i++)
-        	{
-        		if (this.song.hashTable[i] != null)
-        		{
-        			MemHandle currHandle = this.song.hashTable[i];
-        			if (currHandle.getStart() != -1)
-        			{
-        				String currSongName = new String(
-        				    mm.getRecord(currHandle), 0,
-        				    currHandle.getRecordSize(), 
-        				    StandardCharsets.ISO_8859_1);
-        				ans += i + ": |" + currSongName +
-        				    "|\r\n";
-        			}
-        			else
-        			{
-        				ans += i + ": |TOMBSTONE|\r\n";
-        			}
-        			
-        		}
-        	}
+            for (int i = 0; i < this.song.hashTable.length; i++)
+            {
+                if (this.song.hashTable[i] != null)
+                {
+                    MemHandle currHandle = this.song.hashTable[i];
+                    if (currHandle.getStart() != -1)
+                    {
+                        String currSongName = new String(
+                            mm.getRecord(currHandle),
+                            0,
+                            currHandle.getRecordSize(),
+                            StandardCharsets.ISO_8859_1);
+                        ans += i + ": |" + currSongName + "|\r\n";
+                    }
+                    else
+                    {
+                        ans += i + ": |TOMBSTONE|\r\n";
+                    }
+
+                }
+            }
             return ans + "total songs: " + song.printTable();
         }
-        
+
         else if (type.equals("blocks"))
         {
             return mm.printBlocks();
         }
-        
+
         else
         {
             return "Bad print parameter";
         }
-        
-        
+
     }
-    
-    
-    
-    /**Checks if value is a power of two by subtracting 1 to flip 
-    * the bit and all bits below it, then AND'ing them, which 
-   	* would result in a 0 if value is a power of 2
-    * @param x
-    * @return True if power of 2, false if not
-    */
+
+
+    /**
+     * Checks if value is a power of two by subtracting 1 to flip the bit and
+     * all bits below it, then AND'ing them, which would result in a 0 if value
+     * is a power of 2
+     * 
+     * @param x
+     * @return True if power of 2, false if not
+     */
     private boolean isPowerOfTwo(int x)
     {
         return (x & (x - 1)) == 0;
