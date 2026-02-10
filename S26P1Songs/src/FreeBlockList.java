@@ -209,4 +209,38 @@ public class FreeBlockList
         // returns old head block
         return b;
     }
+
+
+    public String getStartsSorted()
+    {
+        // Count nodes
+        int count = 0;
+        Node curr = head;
+        while (curr != null)
+        {
+            count++;
+            curr = curr.next;
+        }
+
+        // Copy starts into array
+        int[] starts = new int[count];
+        curr = head;
+        for (int i = 0; i < count; i++)
+        {
+            starts[i] = curr.block.start;
+            curr = curr.next;
+        }
+
+        java.util.Arrays.sort(starts);
+
+        // Build string with spaces between, no trailing space
+        StringBuilder ans = new StringBuilder();
+        for (int i = 0; i < starts.length; i++)
+        {
+            ans.append(starts[i]);
+            if (i < starts.length - 1)
+                ans.append(" ");
+        }
+        return ans.toString();
+    }
 }
