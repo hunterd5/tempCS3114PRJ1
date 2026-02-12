@@ -1,9 +1,15 @@
 import static org.junit.Assert.*;
 import org.junit.Test;
+
 public class HashTest
 {
 
     @Test
+    // ----------------------------------------------------------
+    /**
+     * Test that inserting string returns MemHandle with start position and
+     * block size
+     */
     public void singleInsertTest()
     {
         MemManager mm = new MemManager(2048);
@@ -20,6 +26,11 @@ public class HashTest
 
 
     @Test
+    // ----------------------------------------------------------
+    /**
+     * Tests that inserting multiple strings returns MemHandles with block size
+     * and start positions
+     */
     public void multipleInsertTest()
     {
         MemManager mm = new MemManager(2048);
@@ -41,6 +52,10 @@ public class HashTest
 
 
     @Test
+    // ----------------------------------------------------------
+    /**
+     * Tests that getter method returns original string from MemHandle
+     */
     public void getTest()
     {
         MemManager mm = new MemManager(32);
@@ -54,6 +69,10 @@ public class HashTest
 
 
     @Test
+    // ----------------------------------------------------------
+    /**
+     * Tests that collision is stored and returned correctly
+     */
     public void colResTest()
     {
         MemManager mm = new MemManager(32);
@@ -73,6 +92,11 @@ public class HashTest
 
 
     @Test
+    // ----------------------------------------------------------
+    /**
+     * Tests that data being returned is using MemHandle that belongs to hash
+     * and returns not found output
+     */
     public void dataNotFoundTest()
     {
         MemManager mm = new MemManager(32);
@@ -92,6 +116,10 @@ public class HashTest
 
 
     @Test
+    // ----------------------------------------------------------
+    /**
+     * Tests that hash table resizes and updates correctly
+     */
     public void doubleHashSizeTest()
     {
         MemManager mm = new MemManager(32);
@@ -112,6 +140,10 @@ public class HashTest
 
 
     @Test
+    // ----------------------------------------------------------
+    /**
+     * tests that rehash can be called after inserts correctly
+     */
     public void rehashTest()
     {
         MemManager mm = new MemManager(32);
@@ -128,6 +160,10 @@ public class HashTest
 
 
     @Test
+    // ----------------------------------------------------------
+    /**
+     * tests that remove returns true the first time and false after
+     */
     public void removeTest()
     {
         MemManager mm = new MemManager(32);
@@ -149,6 +185,10 @@ public class HashTest
 
 
     @Test
+    // ----------------------------------------------------------
+    /**
+     * Tests contains returns true when in DB and false otherwise
+     */
     public void testContains()
     {
         MemManager mm = new MemManager(64);
@@ -169,6 +209,10 @@ public class HashTest
 
 
     @Test
+    // ----------------------------------------------------------
+    /**
+     * Tests that rehash doesnt affect current keys
+     */
     public void testRehashData()
     {
         MemManager mm = new MemManager(128);
@@ -188,6 +232,10 @@ public class HashTest
 
 
     @Test
+    // ----------------------------------------------------------
+    /**
+     * Tests that removing updates table pop count and prints correctly
+     */
     public void testRemovetablePop()
     {
         MemManager mm = new MemManager(128);
