@@ -15,6 +15,7 @@ public class FreeBlockList
     {
         /** The FreeBlock stored within a single node */
         FreeBlock block;
+
         /** The next node within the linked list */
         Node next;
 
@@ -58,16 +59,20 @@ public class FreeBlockList
     {
         // Creating a new string builder to store the return value
         StringBuilder ans = new StringBuilder();
+
         // Creating a current node holder to iterate through the list
         Node curr = head;
+
         // While the current node we are checking is not null...
         while (curr != null)
         {
             // Add the block's starting location to the string
             ans.append(curr.block.start).append(" ");
+
             // Iterate to the next node within the list
             curr = curr.next;
         }
+
         // Returning final list of starting locations within the list
         return ans.toString();
     }
@@ -83,9 +88,11 @@ public class FreeBlockList
     {
         // Creating a new node holding the block as it's data
         Node n = new Node(block);
-        // The next field of this new block is initialized to
-        // the old head of the list
+
+        // The next field of this new block is initialized to the old head of
+        // the list
         n.next = head;
+
         // The new node is then deemed as the head node
         head = n;
     }
@@ -111,8 +118,8 @@ public class FreeBlockList
             return;
         }
 
-        // Setting up a previous and current node variables as first
-        // and second nodes to iterate through the list
+        // Setting up a previous and current node variables as first and second
+        // nodes to iterate through the list
         Node prev = head;
         Node curr = head.next;
 
@@ -122,9 +129,8 @@ public class FreeBlockList
             // Checks data within current node matches search block
             if (curr.block == block)
             {
-                // If so, removes node from list by setting
-                // the previous node's next node field to the
-                // current next node
+                // If so, removes node from list by setting the previous node's
+                // next node field to the current next node
                 prev.next = curr.next;
                 return;
             }
@@ -148,22 +154,25 @@ public class FreeBlockList
     {
         // Setting current node at the start of list for iterations
         Node curr = head;
+
         // While there is data in the current node...
         while (curr != null)
         {
-            // Check if node with data contains a block that
-            // starts at desired start point
+            // Check if node with data contains a block that starts at desired
+            // start point
             if (curr.block.start == buddyStart)
             {
-                // Returns block from the list that represents
-                // the buddy to a block to be released
+                // Returns block from the list that represents the buddy to a
+                // block to be released
                 return curr.block;
             }
+
             // Iterating through the nodes
             curr = curr.next;
         }
-        // If block with desired start point is not found within
-        // list, return null
+
+        // If block with desired start point is not found within list, return
+        // null
         return null;
     }
 
@@ -175,8 +184,8 @@ public class FreeBlockList
      */
     public FreeBlock getFirst()
     {
-        // If the head is null, return null, else, return the
-        // data from the head node
+        // If the head is null, return null, else, return the data from the head
+        // node
         return (head == null) ? null : head.block;
     }
 
@@ -201,11 +210,16 @@ public class FreeBlockList
     {
         // checks if list is empty
         if (head == null)
+        {
             return null;
+        }
+
         // Captures the head block
         FreeBlock b = head.block;
+
         // sets the list head to next node
         head = head.next;
+
         // returns old head block
         return b;
     }

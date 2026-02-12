@@ -209,10 +209,13 @@ public class MemManager
         int memStart = h.getStart();
         int memSize = h.getRecordSize();
 
+        // finds the memhandle
         for (int i = 0; i < memSize; i++)
         {
             data[i] = memoryPool[memStart + i];
         }
+        
+        //returns the memhandle
         return data;
     }
 
@@ -276,8 +279,10 @@ public class MemManager
         StringBuilder ans = new StringBuilder();
         boolean hasBlocks = false;
 
+        // search free list
         for (int i = 0; i < freeLists.length; i++)
         {
+            // if list is not empty, seperate list and sort
             if (!freeLists[i].isEmpty())
             {
                 hasBlocks = true;
@@ -289,11 +294,13 @@ public class MemManager
             }
         }
 
+        // if there are no blocks, then output none available
         if (!hasBlocks)
         {
             return "No free blocks are available.";
         }
 
+        // return string
         return ans.toString();
     }
 }

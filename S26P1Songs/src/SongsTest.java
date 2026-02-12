@@ -250,9 +250,13 @@ public class SongsTest extends TestCase {
         it = new SongsDB();
         assertEquals("", it.create(10, 32));
 
+        // add song
         it.insert("Tate McRae", "TIT FOR TAT");
+        
+        // recreate
         assertEquals("", it.create(5, 64));
 
+        // check for reset
         String[] artists = it.print("artist").split("\r\n");
         assertEquals(1, artists.length);
         assertEquals("total artists: 0", artists[0]);
@@ -272,16 +276,18 @@ public class SongsTest extends TestCase {
         it = new SongsDB();
         it.create(10, 32);
 
+        // add song
         it.insert("Katelyn", "Purple Rain");
         
+        //clear
         assertTrue(it.clear());
         
+        // check for reset
         assertFuzzyEquals("total artists: 0", it.print("artist"));
         assertFuzzyEquals("total songs: 0", it.print("song"));
         
         assertFuzzyEquals("|Katelyn| does not exist in the Artist database", 
             it.remove("artist", "Katelyn"));
-        
         assertFuzzyEquals("|Purple Rain| does not exist in the Song database", 
             it.remove("song", "Purple Rain"));
         
@@ -298,10 +304,13 @@ public class SongsTest extends TestCase {
         it = new SongsDB();
         it.create(10, 32);
 
+        // add song
         it.insert("Katelyn", "Purple Rain");
 
+        // clear
         assertTrue(it.clear());
 
+        //test printBlocks frees block
         String blocks = it.print("blocks").trim();
 
         assertEquals("32: 0", blocks);
@@ -317,9 +326,11 @@ public class SongsTest extends TestCase {
         it = new SongsDB();
         it.create(11, 64);
 
+        // add same song diff artist
         it.insert("Rihanna", "Stay");
         it.insert("Post Malone", "Stay");
         
+        // test only 1 count for duplicate song
         String[] lines = it.print("song").split("\r\n");
         assertEquals("total songs: 1", lines[lines.length - 1]);
     }
@@ -334,11 +345,13 @@ public class SongsTest extends TestCase {
         it = new SongsDB();
         it.create(11, 64);
 
+        // add song
         it.insert("Rihanna", "Stay");
 
         String out = it.insert("Post Malone", "Stay");
         String[] lines = out.split("\r\n");
 
+        // test output of adding duplicate song
         assertEquals(2, lines.length);
         assertEquals("|Post Malone| is added to the Artist database", lines[0]);
         assertEquals("|Stay| duplicates a record already in the Song database", lines[1]);
@@ -354,11 +367,14 @@ public class SongsTest extends TestCase {
         it = new SongsDB();
         it.create(10, 32);
 
+        //add song
         it.insert("Men I Trust", "Sugar");
 
+        // test artist print
         String[] a = it.print("artist").split("\r\n");
         assertEquals("total artists: 1", a[a.length - 1]);
 
+        // test song print
         String[] s = it.print("song").split("\r\n");
         assertEquals("total songs: 1", s[s.length - 1]);
     }
@@ -373,8 +389,10 @@ public class SongsTest extends TestCase {
         it = new SongsDB();
         it.create(11, 64);
 
+        // add song
         it.insert("Katelyn", "Happy Song");
 
+        // check that it removed
         assertEquals("|Katelyn| is removed from the Artist database",
             it.remove("artist", "Katelyn"));
 
@@ -393,6 +411,7 @@ public class SongsTest extends TestCase {
         it = new SongsDB();
         it.create(11, 32);
 
+        //try to remove something that was never there
         assertEquals("|Nada| does not exist in the Artist database",
             it.remove("artist", "Nada"));
         assertEquals("|Nada| does not exist in the Song database",
@@ -409,8 +428,10 @@ public class SongsTest extends TestCase {
         it = new SongsDB();
         it.create(11, 64);
 
+        // add song
         it.insert("The Marias", "No One Noticed");
 
+        //rest that remove print works
         assertEquals("|No One Noticed| is removed from the Song database",
             it.remove("song", "No One Noticed"));
         assertEquals("|The Marias| is removed from the Artist database",
@@ -427,6 +448,7 @@ public class SongsTest extends TestCase {
         it = new SongsDB();
         assertEquals("", it.create(11, 2));
 
+        // test incorrect power of 2 output
         it = new SongsDB();
         assertEquals("Initial memory manager size must be a power of 2",
             it.create(11, 6));

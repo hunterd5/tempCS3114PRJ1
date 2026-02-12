@@ -54,7 +54,6 @@ public class SongsDB
             init = false;
             return "Initial memory manager size must be positive";
         }
-
         if (!isPowerOfTwo(inMemMan))
         {
             init = false;
@@ -151,6 +150,8 @@ public class SongsDB
             ans.append("Artist hash table size doubled\r\n");
         }
 
+        // output whether adding the artist was successful or not (due to
+        // duplication)
         if (artistDuplicate)
         {
             ans.append(
@@ -186,6 +187,8 @@ public class SongsDB
             ans.append("Song hash table size doubled\r\n");
         }
 
+        // output whether adding the record was successful or not (due to
+        // duplication)
         if (songDuplicate)
         {
             ans.append(
@@ -198,6 +201,7 @@ public class SongsDB
                 "|" + songString + "| is added to the Song " + "database\r\n");
         }
 
+        // return string
         return ans.toString();
 
     }
@@ -251,6 +255,7 @@ public class SongsDB
         // remove from table
         MemHandle rm = table.remove(nameString);
 
+        // output for null
         if (rm == null)
         {
             if (type.equals("artist"))
@@ -262,8 +267,10 @@ public class SongsDB
                 + "database";
         }
 
+        // free mm
         mm.release(rm);
 
+        // return output
         if (type.equals("artist"))
         {
             return "|" + nameString + "| is removed from the Artist database";
@@ -348,14 +355,18 @@ public class SongsDB
 
                 }
             }
+            
+            //return output
             return ans + "total songs: " + song.printTable();
         }
 
+        // if it's blocks then return printBlocks
         else if (type.equals("blocks"))
         {
             return mm.printBlocks();
         }
 
+        // if not artist songs or blocs, return bad parameter
         else
         {
             return "Bad print parameter";

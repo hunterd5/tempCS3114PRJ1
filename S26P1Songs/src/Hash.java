@@ -12,12 +12,16 @@ public class Hash
 
     /** Tombstone representation */
     private static final MemHandle TOMBSTONE = new MemHandle(-1, -1, -1);
+
     /** Hash Table */
     MemHandle[] hashTable;
+
     /** Memory Manager */
     MemManager mm;
+
     /** Table size */
     int m;
+
     /** Table population */
     int tablePop;
 
@@ -33,8 +37,10 @@ public class Hash
     {
         // Creating array of memory handles using passed in size
         hashTable = new MemHandle[init];
+
         // Initializing the memory manager to the field
         mm = mem;
+
         // Initializing the hash table current size to the field
         m = init;
     }
@@ -114,6 +120,7 @@ public class Hash
             return stringData;
         }
 
+        // return message if not found
         return "Data not found within hash table";
     }
 
@@ -166,12 +173,10 @@ public class Hash
          */
         hashTable[i] = handle;
 
-        /* Increase the current table population by 1 */
+        // Increase the current table population by 1
         tablePop++;
 
-        /*
-         * Returning the generated handle that was inserted into hash table
-         */
+        // Returning the generated handle that was inserted into hash table
         return handle;
     }
 
@@ -198,9 +203,7 @@ public class Hash
             handle.getRecordSize(),
             StandardCharsets.ISO_8859_1);
 
-        /*
-         * Finding the initial index to search using the hash function
-         */
+        // Finding the initial index to search using the hash function
         int initialIndex = h(key, m);
 
         /*
@@ -224,11 +227,9 @@ public class Hash
             // returning true for successful removal from hash table
             return true;
         }
+
         // if value not found within probing path, return false
-        else
-        {
-            return false;
-        }
+        return false;
     }
 
 
@@ -263,14 +264,10 @@ public class Hash
             tablePop--;
             return handle;
         }
-        // If not found, return a null handle
-        else
-            return null;
-    }
 
-    // ===============================================
-    // HELPER FUNCTIONS
-    // ===============================================
+        // If not found, return a null handle
+        return null;
+    }
 
 
     /**
@@ -313,9 +310,7 @@ public class Hash
             j++;
         }
 
-        /*
-         * Returning -1 if reached end of probing path without finding handle
-         */
+        // Returning -1 if reached end of probing path without finding handle
         return -1;
     }
 
@@ -347,28 +342,20 @@ public class Hash
             // For each position not null and not tombstone
             if (hashTable[i] != TOMBSTONE)
             {
-                /*
-                 * Use the memory handle from the table at the current position
-                 */
+                // Use the memory handle from the table at the current position
                 MemHandle handle = hashTable[i];
 
-                /*
-                 * Use handle to find the record of bytes in memory manager
-                 */
+                // Use handle to find the record of bytes in memory manager
                 byte[] bytes = mm.getRecord(handle);
 
-                /*
-                 * Convert bytes to string to compare to the passed in string
-                 */
+                // Convert bytes to string to compare to the passed in string
                 String stored = new String(
                     bytes,
                     0,
                     handle.getRecordSize(),
                     StandardCharsets.ISO_8859_1);
 
-                /*
-                 * If they are they same, return the index that it was found
-                 */
+                // If they are they same, return the index that it was found
                 if (stored.equals(data))
                 {
                     return i;
@@ -401,9 +388,7 @@ public class Hash
         // Assigning the quadratic probing iteration count to 0
         int j = 0;
 
-        /*
-         * Assigning the initial current position to the found initial position
-         */
+        // Assigning the initial current position to the found initial position
         int i = homeSlot;
 
         /*
@@ -435,10 +420,8 @@ public class Hash
      */
     private int colResStep(int homeSlot, int j)
     {
-        /*
-         * Calculating the next probe spot and wrapping the value around the
-         * current size of the hash table
-         */
+        // Calculating the next probe spot and wrapping the value around the
+        // current size of the hash table
         return (homeSlot + j * j) % m;
     }
 
@@ -450,12 +433,13 @@ public class Hash
     {
         // Doubling the current hash table size
         m *= 2;
+
         // Creating a new hash table using the updated size
         MemHandle[] newHashTable = new MemHandle[m];
-        /*
-         * Copying all old values from old hash table into the new hash table
-         */
+
+        // Copying all old values from old hash table into the new hash table
         System.arraycopy(hashTable, 0, newHashTable, 0, hashTable.length);
+
         // Setting the new, larger hash table as the new hash table
         hashTable = newHashTable;
     }
@@ -473,9 +457,7 @@ public class Hash
         // Emptying out the old hash table
         hashTable = new MemHandle[currHashTableCopy.length];
 
-        /*
-         * Reseting table population to 0 to prepare to insert the old handles
-         */
+        // Reseting table population to 0 to prepare to insert the old handles
         tablePop = 0;
 
         // Going through all the items in the old hash table
@@ -506,6 +488,11 @@ public class Hash
     }
 
 
+    /**
+     * print method for SongsDB connection
+     * 
+     * @return string containing tablePop
+     */
     public String printTable()
     {
         StringBuilder ans = new StringBuilder();
@@ -514,6 +501,14 @@ public class Hash
     }
 
 
+    /**
+     * Rehashing the current hash table by iterating through the table from
+     * start to finish and re-inserting all handles
+     * 
+     * @param data
+     *            target string
+     * @return true if data is in hash and false otherwise
+     */
     public boolean contains(String data)
     {
         int home = h(data, m);

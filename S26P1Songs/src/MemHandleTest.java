@@ -1,10 +1,16 @@
 import static org.junit.Assert.*;
 import org.junit.Test;
 
-public class MemHandleTest {
+public class MemHandleTest
+{
 
-    @Test
-    public void testConstructorAndGetters() {
+    // ----------------------------------------------------------
+    /**
+     * tests that the constructor creates a handle correctly and that get
+     * methods return the correct values
+     */
+    public void testConstructorAndGetters()
+    {
         // Create a handle
         MemHandle handle = new MemHandle(10, 64, 15);
 
@@ -13,8 +19,13 @@ public class MemHandleTest {
         assertEquals(64, handle.getBlockSize());
     }
 
-    @Test
-    public void testMultipleHandles() {
+
+    // ----------------------------------------------------------
+    /**
+     * tests that setting multiple hands increases block size
+     */
+    public void testMultipleHandles()
+    {
         MemHandle h1 = new MemHandle(0, 8, 5);
         MemHandle h2 = new MemHandle(8, 16, 5);
 
@@ -24,9 +35,14 @@ public class MemHandleTest {
         assertEquals(8, h2.getStart());
         assertEquals(16, h2.getBlockSize());
     }
-    
-    @Test
-    public void testGetRecordSize() {
+
+
+    // ----------------------------------------------------------
+    /**
+     * tests that getRecord gives correct record size
+     */
+    public void testGetRecordSize()
+    {
         MemHandle h1 = new MemHandle(0, 8, 5);
         MemHandle h2 = new MemHandle(8, 16, 5);
 
